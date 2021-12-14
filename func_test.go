@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"runtime/debug"
 	"testing"
 
 	"github.com/wuhuizuo/go-wasm-go/provider/jsgoja"
-	"golang.org/x/sync/errgroup"
 )
 
 const (
@@ -72,10 +70,8 @@ func TestJS_fibonacci(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			for i := 0; i < 100; i++ {
-				if got := f(tt.in); got != tt.want {
-					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
-				}
+			if got := f(tt.in); got != tt.want {
+				t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -96,10 +92,8 @@ func Test_wazero_Fibonacci(t *testing.T) {
 		store := newWASMStoreWithWazero(t, wasmTinygo)
 		for _, tt := range tests {
 			t.Run(fmt.Sprintf("%s-%s", t.Name(), tt.name), func(t *testing.T) {
-				for i := 0; i < 100; i++ {
-					if got := callWASMFuncWithWazero(t, store, tt.in); got != tt.want {
-						t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
-					}
+				if got := callWASMFuncWithWazero(t, store, tt.in); got != tt.want {
+					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
 				}
 			})
 		}
@@ -133,10 +127,8 @@ func Test_wasmer_Fibonacci(t *testing.T) {
 		fn := getWasmFuncWithWasmer(t, wasmTinygo)
 		for _, tt := range tests {
 			t.Run(fmt.Sprintf("%s-%s", t.Name(), tt.name), func(t *testing.T) {
-				for i := 0; i < 100; i++ {
-					if got := callWASMFuncWithWasmer(t, fn, tt.in); got != tt.want {
-						t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
-					}
+				if got := callWASMFuncWithWasmer(t, fn, tt.in); got != tt.want {
+					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
 				}
 			})
 		}
@@ -144,8 +136,8 @@ func Test_wasmer_Fibonacci(t *testing.T) {
 
 	t.Run("go", func(t *testing.T) {
 		t.Skip()
+		fn := getWasmFuncWithWasmer(t, wasmGo)
 		for _, tt := range tests {
-			fn := getWasmFuncWithWasmer(t, wasmGo)
 			t.Run(fmt.Sprintf("%s-%s", t.Name(), tt.name), func(t *testing.T) {
 				if got := callWASMFuncWithWasmer(t, fn, tt.in); got != tt.want {
 					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
@@ -155,49 +147,43 @@ func Test_wasmer_Fibonacci(t *testing.T) {
 	})
 }
 
-func Test_wasmer_Fibonacci_multi_threads(t *testing.T) {
-	debug.SetGCPercent(-1)
+func Test_wasmedge_Fibonacci(t *testing.T) {
+	tests := []struct {
+		name string
+		in   uint32
+		want uint32
+	}{
+		{name: "20", in: 20, want: 6765},
+		{name: "10", in: 10, want: 55},
+		{name: "5", in: 5, want: 5},
+	}
 
-	// tests := []struct {
-	// 	name string
-	// 	in   uint32
-	// 	want uint32
-	// }{
-	// 	{name: "20", in: 20, want: 6765},
-	// 	{name: "10", in: 10, want: 55},
-	// 	{name: "5", in: 5, want: 5},
-	// }
+	t.Run("tinygo", func(t *testing.T) {
+		vm, conf := getWasmedgeInstance(t, wasmTinygo)
+		defer vm.Release()
+		defer conf.Release()
 
-	// t.Run("tinygo", func(t *testing.T) {
-	// 	fn := getWasmFuncWithWasmer(t, wasmTinygo)
-	// 	for _, tt := range tests {
-	// 		t.Run(fmt.Sprintf("%s-%s", t.Name(), tt.name), func(t *testing.T) {
-	// 			for i := 0; i < 100; i++ {
-	// 				if got := callWASMFuncWithWasmer(t, fn, tt.in); got != tt.want {
-	// 					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
-	// 				}
-	// 			}
-	// 		})
-	// 	}
-	// })
-
-	t.Run("multi threads", func(t *testing.T) {
-		fn := getWasmFuncWithWasmer(t, wasmTinygo)
-
-		g := new(errgroup.Group)
-		for i := 0; i <= 16; i++ {
-			g.Go(func() error {
-				for i := 0; i < 1000; i++ {
-					if got := callWASMFuncWithWasmer(t, fn, 30); got != 832040 {
-						return fmt.Errorf("Fibonacci() = %v, want %v", got, 832040)
-					}
+		for _, tt := range tests {
+			t.Run(fmt.Sprintf("%s-%s", t.Name(), tt.name), func(t *testing.T) {
+				if got := callWASMFuncWithWasmedge(t, vm, tt.in); got != tt.want {
+					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
 				}
-				return nil
 			})
 		}
+	})
 
-		if err := g.Wait(); err != nil {
-			t.Error(err)
+	t.Run("go", func(t *testing.T) {
+		t.Skip()
+		vm, conf := getWasmedgeInstance(t, wasmGo)
+		defer vm.Release()
+		defer conf.Release()
+
+		for _, tt := range tests {
+			t.Run(fmt.Sprintf("%s-%s", t.Name(), tt.name), func(t *testing.T) {
+				if got := callWASMFuncWithWasmedge(t, vm, tt.in); got != tt.want {
+					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
+				}
+			})
 		}
 	})
 }

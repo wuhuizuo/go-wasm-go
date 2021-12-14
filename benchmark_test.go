@@ -79,6 +79,16 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn uint32) {
 			}
 		})
 	})
+	b.Run(fmt.Sprintf("wasm-wasmedge - fb(%d)", fbIn), func(b *testing.B) {
+		b.RunParallel(func(pb *testing.PB) {
+			vm, conf := getWasmedgeInstance(b, wasmTinygo)
+			defer vm.Release()
+			defer conf.Release()
+			for pb.Next() {
+				callWASMFuncWithWasmedge(b, vm, fbIn)
+			}
+		})
+	})
 
 	b.Run(fmt.Sprintf("js - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
@@ -118,11 +128,21 @@ func benchmark_fibonacci_single(b *testing.B, fbIn uint32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wasmer - fb(%d)", fbIn), func(b *testing.B) {
-		b.ResetTimer()
 		wasmFn := getWasmFuncWithWasmer(b, wasmTinygo)
+		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
 			callWASMFuncWithWasmer(b, wasmFn, fbIn)
+		}
+	})
+	b.Run(fmt.Sprintf("wasm-wasmedge - fb(%d)", fbIn), func(b *testing.B) {
+		vm, conf := getWasmedgeInstance(b, wasmTinygo)
+		defer vm.Release()
+		defer conf.Release()
+		b.ResetTimer()
+
+		for i := 0; i < b.N; i++ {
+			callWASMFuncWithWasmedge(b, vm, fbIn)
 		}
 	})
 
