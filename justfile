@@ -8,10 +8,17 @@ install_tinygo:
     wget -qO- https://github.com/tinygo-org/tinygo/releases/download/v{{tinygo_ver}}/tinygo{{tinygo_ver}}.linux-amd64.tar.gz | tar -zxf - -C /usr/local/
     echo 'PATH=$PATH:/usr/local/tinygo/bin' > /etc/profile.d/tinygo.sh
 
-build_wasm_with_tinygo PROVIDER:
-    cd provider/{{PROVIDER}}
+build_wasm_tinygo:
+    #!/usr/bin/env sh
+    cd provider/wasm-tinygo &&
     tinygo build -target=wasi -o wasm.wasm
 
+build_wasm_go:
+    #!/usr/bin/env sh
+    cd provider/wasm-go
+    GOOS=js GOARCH=wasm go build -o wasm.wasm
+
 build_plugin:
+    #!/usr/bin/env sh
     cd provider/plugin
     go build -buildmode=plugin -o plugin.so

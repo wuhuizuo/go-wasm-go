@@ -12,6 +12,8 @@ github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfn
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
+github.com/mattn/gowasmer v0.0.0-20210828000224-0732b1063aea h1:SCAX5QXHT5+xqLnw0PHUedM+Nudrfqc/RFPen0mkn6k=
+github.com/mattn/gowasmer v0.0.0-20210828000224-0732b1063aea/go.mod h1:Gs92VjKXpZj7QGetn+k6Kh5L0Nv5AFAcYW9jcgTG5qk=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/second-state/WasmEdge-go v0.9.0 h1:CapdsNNP5HG8nIeX8qmRteie8SZC/+BkmNXq+IoQlKE=
@@ -23,6 +25,7 @@ github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/tetratelabs/wazero v0.0.0-20211213083343-b88f0dfd4b90 h1:QuKhP1vrzBee9gqCfDJ+GSrwOwv2+gebUC3mIXF9LZA=
 github.com/tetratelabs/wazero v0.0.0-20211213083343-b88f0dfd4b90/go.mod h1:h2C4510TzTfWc2jP+uXh9hXDMLTb6QzPBiRYuqfrstw=
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
+github.com/wasmerio/wasmer-go v1.0.3/go.mod h1:0gzVdSfg6pysA6QVp6iVRPTagC6Wq9pOE8J86WKb2Fk=
 github.com/wasmerio/wasmer-go v1.0.4 h1:MnqHoOGfiQ8MMq2RF6wyCeebKOe84G88h5yv+vmxJgs=
 github.com/wasmerio/wasmer-go v1.0.4/go.mod h1:0gzVdSfg6pysA6QVp6iVRPTagC6Wq9pOE8J86WKb2Fk=
 golang.org/x/text v0.3.6 h1:aRYxNxv6iGQlyVaZmk6ZgYEDa+Jg18DxebPSrd6bg1M=

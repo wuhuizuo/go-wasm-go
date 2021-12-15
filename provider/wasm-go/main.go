@@ -2,18 +2,14 @@ package main
 
 import (
 	"syscall/js"
+
+	"github.com/mattn/gowasmer/wasmutil"
+	"github.com/wuhuizuo/go-wasm-go/provider"
 )
 
 func main() {
-	js.Global().Set("Fibonacci", js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		return Fibonacci(uint32(args[0]))
-	}))
-	select {}
-}
+	js.Global().Set("Fibonacci", js.FuncOf(wasmutil.Wrap(provider.Fibonacci)))
+	js.Global().Set("HTTPBasicAuth", js.FuncOf(wasmutil.Wrap(provider.HTTPBasicAuth)))
 
-func Fibonacci(in uint32) uint32 {
-	if in <= 1 {
-		return in
-	}
-	return Fibonacci(in-1) + Fibonacci(in-2)
+	select {}
 }

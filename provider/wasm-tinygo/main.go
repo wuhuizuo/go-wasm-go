@@ -1,12 +1,17 @@
 package main
 
+import "github.com/wuhuizuo/go-wasm-go/provider"
+
 func main() {
+	// nothing.
 }
 
 //export Fibonacci
-func Fibonacci(in uint32) uint32 {
-	if in <= 1 {
-		return in
-	}
-	return Fibonacci(in-1) + Fibonacci(in-2)
+func Fibonacci(in int32) int32 {
+	return provider.Fibonacci(in)
+}
+
+//export HTTPBasicAuth
+func HTTPBasicAuth(username, password string) {
+	provider.HTTPBasicAuth(username, password)
 }

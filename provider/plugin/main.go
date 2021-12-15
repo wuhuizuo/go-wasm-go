@@ -1,11 +1,10 @@
 package main
 
-func main() {
-}
+import (
+	"github.com/wuhuizuo/go-wasm-go/provider"
+)
 
-func Fibonacci(in uint32) uint32 {
-	if in <= 1 {
-		return in
-	}
-	return Fibonacci(in-1) + Fibonacci(in-2)
-}
+var (
+	Fibonacci     = provider.Fibonacci
+	HTTPBasicAuth = provider.HTTPBasicAuth
+)
