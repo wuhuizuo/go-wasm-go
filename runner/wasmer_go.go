@@ -8,7 +8,7 @@ import (
 )
 
 // getWasmFuncWithWasmer parse wasm function with wasmer.
-func getGoWasmFuncWithWasmer(t testing.TB, wasmFile string) interface{} {
+func getGoWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) interface{} {
 	binary, err := ioutil.ReadFile(wasmFile)
 	if err != nil {
 		t.Fatal(err)
@@ -20,7 +20,7 @@ func getGoWasmFuncWithWasmer(t testing.TB, wasmFile string) interface{} {
 	}
 
 	// Gets the `fn` exported function from the WebAssembly instance.
-	fn := instance.Get(fibFuncName)
+	fn := instance.Get(funcName)
 	if fn == nil {
 		t.Fatal("not found exported function in wasm exec binnay")
 	}
@@ -28,20 +28,13 @@ func getGoWasmFuncWithWasmer(t testing.TB, wasmFile string) interface{} {
 	return fn
 }
 
-// callWASMFuncWithWasmer call test func with wasmer loaded func.
-func callGoWASMFuncWithWasmer(t testing.TB, fn interface{}, in int32) int32 {
+// callGoWASMFuncWithWasmer call test func with wasmer loaded func.
+func callGoWASMFuncWithWasmer(t testing.TB, fn interface{}, args []interface{}) interface{} {
 	switch v := fn.(type) {
 	case func([]interface{}) interface{}:
-		ret := v([]interface{}{int32(in)})
-
-		reti, ok := ret.(float64)
-		if !ok {
-			t.Fatalf("return type is %T", ret)
-		}
-
-		return int32(reti)
+		return v(args)
 	default:
 		t.Fatalf("unknown type: %T", fn)
-		return 0
+		return nil
 	}
 }

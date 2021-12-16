@@ -1,8 +1,8 @@
 package runner
 
 const (
-	wazeroModName = "wasmtest"
-
-	fibFuncName     = "Fibonacci"
-	httpReqFuncName = "HTTPBasicAuth"
+	fibFuncName          = "Fibonacci"
+	httpReqFuncName      = "RequestHTTP"
+	ioFunName            = "FileIO"
+	multiThreadsFuncName = "MultiThreads"
 )

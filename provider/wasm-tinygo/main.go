@@ -1,6 +1,6 @@
 package main
 
-import "github.com/wuhuizuo/go-wasm-go/provider"
+import "github.com/wuhuizuo/go-wasm-go/provider/native"
 
 func main() {
 	// nothing.
@@ -8,10 +8,10 @@ func main() {
 
 //export Fibonacci
 func Fibonacci(in int32) int32 {
-	return provider.Fibonacci(in)
+	return native.Fibonacci(in)
 }
 
-//export HTTPBasicAuth
-func HTTPBasicAuth(username, password string) {
-	provider.HTTPBasicAuth(username, password)
+//export RequestHTTP
+func RequestHTTP(username, password string) {
+	native.RequestHTTP()
 }

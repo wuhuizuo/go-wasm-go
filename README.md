@@ -28,7 +28,7 @@ resolve imports: clock_time_get: not exported in module wasi_snapshot_preview1
 --- FAIL: Test_wazero_tinygo_Fibonacci (0.01s)
 ```
 
-
+**wasmer:**
 ```go
 Missing import: `env`.`time.resetTimer`
 
@@ -53,11 +53,14 @@ FAIL    github.com/wuhuizuo/go-wasm-go/runner   2.561s
 
 定义:
 ```go
-//export HTTPBasicAuth
-func HTTPBasicAuth(username, password string) {
-    provider.HTTPBasicAuth(username, password)
+//export RequestHTTP
+func RequestHTTP(username, password string) {
+    provider.RequestHTTP(username, password)
 }
 ```
+
+可能可以参照这个实现进行导入 host 的东西。
+https://github.com/mosn/proxy-wasm-go-host/blob/3fb13ba763a662bde51f0f324d465d04d8458449/proxywasm/v2/imports.go#L22
 
 #### go 遇到问题
 
@@ -75,7 +78,7 @@ FAIL    github.com/wuhuizuo/go-wasm-go/runner   0.714s
 
 即时没有使用下面的语句申明也是一样有问题:
 ```go
-js.Global().Set("HTTPBasicAuth", js.FuncOf(wasmutil.Wrap(provider.HTTPBasicAuth)))
+js.Global().Set("RequestHTTP", js.FuncOf(wasmutil.Wrap(provider.RequestHTTP)))
 ```
 
 

@@ -1,9 +1,9 @@
 package jsgoja
 
 import (
-	_ "embed"
-
 	"github.com/dop251/goja"
+
+	_ "embed"
 )
 
 //go:embed goja.js
@@ -34,8 +34,8 @@ func NewFibonacci() func(int32) int32 {
 	return fn
 }
 
-func NewHTTPBasicAuth() func(string, string) {
+func NewRequestHTTP() func(string, string) {
 	var fn func(string, string)
-	exportFn("httpbasicAuth", &fn)
+	exportFn("requestHTTP", &fn)
 	return fn
 }

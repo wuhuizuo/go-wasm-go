@@ -9,6 +9,8 @@ import (
 	"github.com/tetratelabs/wazero/wasm/wazeroir"
 )
 
+const wazeroModName = "wasmtest"
+
 // newWASMStoreWithWazero prepare for wazero wasm store.
 func newWASMStoreWithWazero(t testing.TB, wasmFile string) *wasm.Store {
 	binary, err := os.ReadFile(wasmFile)

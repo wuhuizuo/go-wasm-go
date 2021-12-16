@@ -9,7 +9,7 @@ function fibonacci(param) {
     return fibonacci(param - 1) + fibonacci(param - 2);
 }
 
-function httpbasicAuth(username, password) {
+function requestHTTP(username, password) {
     let headersList = {
         "Accept": "*/*",
         "Authorization": 'Basic ' + Base64.encode(username + ":" + password),

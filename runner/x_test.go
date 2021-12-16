@@ -7,7 +7,13 @@ import (
 )
 
 const (
-	goPluginSo = "./provider/plugin/plugin.so"
+	goPluginSo                = "./provider/plugin/ok/plugin.so"
+	goPluginSoThird           = "./provider/plugin/third/plugin.so"
+	goPluginSoThirdDiffModVer = "./provider/plugin/third_diff_mod_ver/plugin.so"
+	goPluginSo_1_15           = "./provider/plugin/ok/plugin-1.15.so"
+	goPluginSo_1_16           = "./provider/plugin/ok/plugin-1.16.so"
+	goPluginSo_1_17_1         = "./provider/plugin/ok/plugin-1.17.1.so"
+
 	wasmTinygo = "./provider/wasm-tinygo/wasm.wasm"
 	wasmGo     = "./provider/wasm-go/wasm.wasm"
 )

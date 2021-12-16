@@ -6,9 +6,13 @@ import (
 	"runtime/debug"
 	"testing"
 
-	"github.com/wuhuizuo/go-wasm-go/provider"
 	"github.com/wuhuizuo/go-wasm-go/provider/jsgoja"
+	"github.com/wuhuizuo/go-wasm-go/provider/native"
 )
+
+func Benchmark_plugin_multi_thread(b *testing.B) {
+
+}
 
 func Benchmark_fibonacci_single_10(b *testing.B) {
 	benchmark_fibonacci_single(b, 1)
@@ -49,14 +53,14 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 	b.Run(fmt.Sprintf("native - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
 			for pb.Next() {
-				provider.Fibonacci(fbIn)
+				native.Fibonacci(fbIn)
 			}
 		})
 	})
 
 	b.Run(fmt.Sprintf("plugin - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
-			soFn := newGoPluginFibonacciFn(b, filepath.Join(selfDir(b), "..", goPluginSo), fibFuncName)
+			soFn := newGoPluginAlgFn(b, filepath.Join(selfDir(b), "..", goPluginSo), fibFuncName)
 			for pb.Next() {
 				soFn(fbIn)
 			}
@@ -75,7 +79,7 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 
 	b.Run(fmt.Sprintf("wasm-wasmer - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
-			wasmFn := getWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+			wasmFn := getWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
 			for pb.Next() {
 				callWASMFuncWithWasmer(b, wasmFn, fbIn)
 			}
@@ -107,12 +111,12 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			provider.Fibonacci(fbIn)
+			native.Fibonacci(fbIn)
 		}
 	})
 
 	b.Run(fmt.Sprintf("plugin - fb(%d)", fbIn), func(b *testing.B) {
-		soFn := newGoPluginFibonacciFn(b, filepath.Join(selfDir(b), "..", goPluginSo), fibFuncName)
+		soFn := newGoPluginAlgFn(b, filepath.Join(selfDir(b), "..", goPluginSo), fibFuncName)
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
@@ -130,7 +134,7 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wasmer - fb(%d)", fbIn), func(b *testing.B) {
-		wasmFn := getWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+		wasmFn := getWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
