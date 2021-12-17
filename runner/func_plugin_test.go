@@ -6,7 +6,7 @@ import (
 )
 
 func TestPlugin(t *testing.T) {
-	t.Run("same go version", func(t *testing.T) {
+	t.Run("same go version same thirdparty versions", func(t *testing.T) {
 		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo))
 	})
 
@@ -20,24 +20,23 @@ func TestPlugin(t *testing.T) {
 		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSoThirdDiffModVer))
 	})
 
-	t.Run("only different on patch version", func(t *testing.T) {
+	t.Run("1.17.3 call plugin compiled in 1.17.1", func(t *testing.T) {
 		t.Skip("调不了")
 
 		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo_1_17_1))
 	})
 
-	t.Run("1.17 call 1.16", func(t *testing.T) {
+	t.Run("1.17 call plugin compiled in 1.16", func(t *testing.T) {
 		t.Skip("调不了")
 
 		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo_1_16))
 	})
 
-	t.Run("1.17 call 1.15", func(t *testing.T) {
+	t.Run("1.17 call plugin compiled in 1.15", func(t *testing.T) {
 		t.Skip("调不了")
 
 		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo_1_15))
 	})
-
 }
 
 func testPlugin(t *testing.T, pluginSo string) {

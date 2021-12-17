@@ -8,7 +8,7 @@ import (
 	"github.com/wuhuizuo/go-wasm-go/provider/native"
 )
 
-func TestNative_algorithm(t *testing.T) {
+func TestNative(t *testing.T) {
 	t.Run("algorithm", func(t *testing.T) {
 		for _, tt := range fbTests {
 			t.Run(tt.name, func(t *testing.T) {
