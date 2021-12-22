@@ -12,7 +12,16 @@ func Fibonacci(in int32) int32 {
 }
 
 //export RequestHTTP
-func RequestHTTP() {
-	return
-	// native.RequestHTTP()
+func RequestHTTP(in int32) int32 {
+	return native.RequestHTTP()
+}
+
+//export FileIO
+func FileIO(in int32) int32 {
+	return native.FileIO()
+}
+
+//export MultiThreads
+func MultiThreads(num int32) int32 {
+	return native.MultiThreads(num)
 }

@@ -72,7 +72,7 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 			// 必须在线程里面加载, 不能在线程外加载，然后并发.
 			store := newWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 			for pb.Next() {
-				callWASMFuncWithWazero(b, store, fbIn)
+				callWASMFuncWithWazero(b, store, fibFuncName, uint64(fbIn))
 			}
 		})
 	})
@@ -129,7 +129,7 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			callWASMFuncWithWazero(b, store, fbIn)
+			callWASMFuncWithWazero(b, store, fibFuncName, uint64(fbIn))
 		}
 	})
 

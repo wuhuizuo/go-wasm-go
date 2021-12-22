@@ -1,10 +1,9 @@
 package runner
 
 import (
+	"fmt"
 	"io/ioutil"
 	"testing"
-
-	"github.com/mattn/gowasmer"
 )
 
 // getWasmFuncWithWasmer parse wasm function with wasmer.
@@ -13,8 +12,9 @@ func getGoWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) interface{
 	if err != nil {
 		t.Fatal(err)
 	}
+	fmt.Println("---------------")
 
-	instance, err := gowasmer.NewInstance(binary)
+	instance, err := NewInstance(binary)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -23,7 +23,10 @@ func getWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) wasmer.Nativ
 	}
 
 	// wasi dealing.
-	wasiEnv, _ := wasmer.NewWasiStateBuilder("wasi-program").Finalize()
+	wasiEnv, err := wasmer.NewWasiStateBuilder("wasi-program").Finalize()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// Instantiates the module
 	importObject, err := wasiEnv.GenerateImportObject(store, mod)

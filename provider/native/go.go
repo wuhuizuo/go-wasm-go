@@ -1,13 +1,7 @@
 package native
 
-import (
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"os"
-
-	"golang.org/x/sync/errgroup"
-)
+// go wasm 中不能调用的:
+// import "fmt"
 
 func Fibonacci(in int32) int32 {
 	if in <= 1 {
@@ -16,6 +10,12 @@ func Fibonacci(in int32) int32 {
 	return Fibonacci(in-1) + Fibonacci(in-2)
 }
 
+func RequestHTTP() int32 {
+	return 0
+	// fmt.Println("RequestHTTP")
+}
+
+/*
 func RequestHTTP() {
 	httpTestURL := `https://httpbin.org/basic-auth`
 	username := "xxx"
@@ -45,7 +45,14 @@ func RequestHTTP() {
 
 	fmt.Println(string(bs))
 }
+*/
 
+func FileIO() int32 {
+	return 0
+	// fmt.Println("FileIO")
+}
+
+/*
 func FileIO() error {
 	dir, err := ioutil.TempDir("", "test-*")
 	if err != nil {
@@ -82,7 +89,14 @@ func FileIO() error {
 
 	return nil
 }
+*/
 
+func MultiThreads(num int32) int32 {
+	return 0
+	// fmt.Println("MultiThreads")
+}
+
+/*
 func MultiThreads(num int32) {
 	g := new(errgroup.Group)
 
@@ -95,3 +109,4 @@ func MultiThreads(num int32) {
 
 	g.Wait()
 }
+*/

@@ -35,8 +35,8 @@ func newWASMStoreWithWazero(t testing.TB, wasmFile string) *wasm.Store {
 }
 
 // callWASMFuncWithWazero call test func with wazero loader.
-func callWASMFuncWithWazero(t testing.TB, store *wasm.Store, in int32) int32 {
-	ret, retTypes, err := store.CallFunction(wazeroModName, fibFuncName, uint64(in))
+func callWASMFuncWithWazero(t testing.TB, store *wasm.Store, funcName string, args ...uint64) []uint64 {
+	ret, retTypes, err := store.CallFunction(wazeroModName, funcName, args...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,5 +51,5 @@ func callWASMFuncWithWazero(t testing.TB, store *wasm.Store, in int32) int32 {
 		t.Fatalf("got value types[0] is %v, but want %v", retTypes[0], wasm.ValueTypeI32)
 	}
 
-	return int32(ret[0])
+	return ret
 }
