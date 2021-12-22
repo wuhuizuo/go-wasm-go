@@ -12,6 +12,7 @@ func Fibonacci(in int32) int32 {
 }
 
 //export RequestHTTP
-func RequestHTTP(username, password string) {
-	native.RequestHTTP()
+func RequestHTTP() {
+	return
+	// native.RequestHTTP()
 }

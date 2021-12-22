@@ -8,7 +8,7 @@ import (
 )
 
 // getWasmFuncWithWasmer parse wasm function with wasmer.
-func getWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) func(...interface{}) (interface{}, error) {
+func getWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) wasmer.NativeFunction {
 	binary, err := ioutil.ReadFile(wasmFile)
 	if err != nil {
 		t.Fatal(err)
@@ -46,8 +46,7 @@ func getWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) func(...inte
 }
 
 // callWASMFuncWithWasmer call test func with wasmer loaded func.
-func callWASMFuncWithWasmer(t testing.TB, fn func(...interface{}) (interface{}, error), args ...interface{}) interface{} {
-	// 这里有点特殊, uint系列会被转换成 int系列
+func callWASMFuncWithWasmer(t testing.TB, fn wasmer.NativeFunction, args ...interface{}) interface{} {
 	ret, err := fn(args...)
 	if err != nil {
 		t.Fatal(err)
