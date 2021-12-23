@@ -17,19 +17,9 @@ func RequestHTTP() int32 {
 
 /*
 func RequestHTTP() {
-	httpTestURL := `https://httpbin.org/basic-auth`
-	username := "xxx"
-	password := "yyy"
+	httpTestURL := `https://www.baidu.com`
 
-	reqURL := fmt.Sprintf("%s/%s/%s", httpTestURL, username, password)
-
-	req, err := http.NewRequest(http.MethodGet, reqURL, nil)
-	if err != nil {
-		panic(err)
-	}
-
-	req.SetBasicAuth(username, password)
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := http.Get(httpTestURL)
 	if err != nil {
 		panic(err)
 	}

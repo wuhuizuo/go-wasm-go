@@ -1,4 +1,4 @@
-package runner
+package wasmtime
 
 import (
 	"io/ioutil"
@@ -7,7 +7,8 @@ import (
 	"github.com/bytecodealliance/wasmtime-go"
 )
 
-func getWasmFuncWithWasmtime(t testing.TB, wasmFile, funcName string) (*wasmtime.Store, *wasmtime.Func) {
+// GetWasmFuncWithWasmtime get wasm func with wasmtime.
+func GetWasmFuncWithWasmtime(t testing.TB, wasmFile, funcName string) (*wasmtime.Store, *wasmtime.Func) {
 	binary, err := ioutil.ReadFile(wasmFile)
 	check(err)
 

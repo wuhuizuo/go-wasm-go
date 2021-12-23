@@ -1,4 +1,4 @@
-package runner
+package wazero
 
 import (
 	"os"
@@ -11,8 +11,8 @@ import (
 
 const wazeroModName = "wasmtest"
 
-// newWASMStoreWithWazero prepare for wazero wasm store.
-func newWASMStoreWithWazero(t testing.TB, wasmFile string) *wasm.Store {
+// NewWASMStoreWithWazero prepare for wazero wasm store.
+func NewWASMStoreWithWazero(t testing.TB, wasmFile string) *wasm.Store {
 	binary, err := os.ReadFile(wasmFile)
 	if err != nil {
 		t.Fatal(err)
@@ -34,8 +34,8 @@ func newWASMStoreWithWazero(t testing.TB, wasmFile string) *wasm.Store {
 	return store
 }
 
-// callWASMFuncWithWazero call test func with wazero loader.
-func callWASMFuncWithWazero(t testing.TB, store *wasm.Store, funcName string, args ...uint64) []uint64 {
+// CallWASMFuncWithWazero call test func with wazero loader.
+func CallWASMFuncWithWazero(t testing.TB, store *wasm.Store, funcName string, args ...uint64) []uint64 {
 	ret, retTypes, err := store.CallFunction(wazeroModName, funcName, args...)
 	if err != nil {
 		t.Fatal(err)

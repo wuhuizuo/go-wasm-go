@@ -1,4 +1,4 @@
-package runner
+package wasmer
 
 import (
 	"io/ioutil"
@@ -7,8 +7,8 @@ import (
 	"github.com/wasmerio/wasmer-go/wasmer"
 )
 
-// getWasmFuncWithWasmer parse wasm function with wasmer.
-func getWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) wasmer.NativeFunction {
+// GetWasmFuncWithWasmer parse wasm function with wasmer.
+func GetWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) wasmer.NativeFunction {
 	binary, err := ioutil.ReadFile(wasmFile)
 	if err != nil {
 		t.Fatal(err)
@@ -23,7 +23,10 @@ func getWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) wasmer.Nativ
 	}
 
 	// wasi dealing.
-	wasiEnv, err := wasmer.NewWasiStateBuilder("wasi-program").Finalize()
+	builder := wasmer.NewWasiStateBuilder("wasm-tinygo").
+		Environment("KEY", "VALUE").
+		CaptureStdout()
+	wasiEnv, err := builder.Finalize()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,8 +51,8 @@ func getWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) wasmer.Nativ
 	return fn
 }
 
-// callWASMFuncWithWasmer call test func with wasmer loaded func.
-func callWASMFuncWithWasmer(t testing.TB, fn wasmer.NativeFunction, args ...interface{}) interface{} {
+// CallWASMFuncWithWasmer call test func with wasmer loaded func.
+func CallWASMFuncWithWasmer(t testing.TB, fn wasmer.NativeFunction, args ...interface{}) interface{} {
 	ret, err := fn(args...)
 	if err != nil {
 		t.Fatal(err)

@@ -1,4 +1,4 @@
-package runner
+package wasmer
 
 // reference: from https://github.com/mattn/gowasmer/edit/main/gowasmer.go
 

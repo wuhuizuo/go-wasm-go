@@ -7,18 +7,18 @@ import (
 )
 
 const (
-	goPluginSo                = "./provider/plugin/ok/plugin.so"
-	goPluginSoThird           = "./provider/plugin/third/plugin.so"
-	goPluginSoThirdDiffModVer = "./provider/plugin/third_diff_mod_ver/plugin.so"
-	goPluginSo_1_15           = "./provider/plugin/ok/plugin-1.15.so"
-	goPluginSo_1_16           = "./provider/plugin/ok/plugin-1.16.so"
-	goPluginSo_1_17_1         = "./provider/plugin/ok/plugin-1.17.1.so"
-
-	wasmTinygo = "./provider/wasm-tinygo/wasm.wasm"
-	wasmGo     = "./provider/wasm-go/wasm.wasm"
+	wasmTinygo = "provider/wasm-tinygo/wasm.wasm"
+	wasmGo     = "provider/wasm-go/wasm.wasm"
 )
 
-var fbTests = []fbTestItem{
+const (
+	fibFuncName          = "Fibonacci"
+	httpReqFuncName      = "RequestHTTP"
+	ioFunName            = "FileIO"
+	multiThreadsFuncName = "MultiThreads"
+)
+
+var fibTests = []fibTestItem{
 	{name: "5", in: 5, want: 5},
 	{name: "10", in: 10, want: 55},
 	{name: "20", in: 20, want: 6765},
@@ -26,7 +26,7 @@ var fbTests = []fbTestItem{
 	// {name: "40", in: 40, want: 102334155},
 }
 
-type fbTestItem struct {
+type fibTestItem struct {
 	name string
 	in   int32
 	want int32

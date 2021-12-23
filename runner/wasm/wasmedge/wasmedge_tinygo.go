@@ -1,4 +1,4 @@
-package runner
+package wasmedge
 
 import (
 	"os"
@@ -7,7 +7,8 @@ import (
 	"github.com/second-state/WasmEdge-go/wasmedge"
 )
 
-func getWasmedgeInstance(t testing.TB, wasmFile string) (*wasmedge.VM, *wasmedge.Configure) {
+// GetWasmedgeInstance get wasm instance with wasmedge.
+func GetWasmedgeInstance(t testing.TB, wasmFile string) (*wasmedge.VM, *wasmedge.Configure) {
 	conf := wasmedge.NewConfigure(wasmedge.WASI)
 	vm := wasmedge.NewVMWithConfig(conf)
 	wasi := vm.GetImportObject(wasmedge.HostRegistration(wasmedge.WASI))
@@ -31,8 +32,8 @@ func getWasmedgeInstance(t testing.TB, wasmFile string) (*wasmedge.VM, *wasmedge
 	return vm, conf
 }
 
-// callWASMFuncWithWasmedgeReturnInt32 call test func with wasmedge loaded func.
-func callWASMFuncWithWasmedgeReturnInt32(t testing.TB, vm *wasmedge.VM, funcName string, args ...interface{}) int32 {
+// CallWASMFuncWithWasmedgeReturnInt32 call test func with wasmedge loaded func.
+func CallWASMFuncWithWasmedgeReturnInt32(t testing.TB, vm *wasmedge.VM, funcName string, args ...interface{}) int32 {
 	ret, err := vm.ExecuteBindgen(funcName, wasmedge.Bindgen_return_i32, args...)
 	if err != nil {
 		t.Fatal(err)
@@ -46,7 +47,7 @@ func callWASMFuncWithWasmedgeReturnInt32(t testing.TB, vm *wasmedge.VM, funcName
 	return v
 }
 
-func callWASMFuncWithWasmedgeReturnVoid(t testing.TB, vm *wasmedge.VM, funcName string, args ...interface{}) {
+func CallWASMFuncWithWasmedgeReturnVoid(t testing.TB, vm *wasmedge.VM, funcName string, args ...interface{}) {
 	_, err := vm.ExecuteBindgen(funcName, wasmedge.Bindgen_return_void, args...)
 	if err != nil {
 		t.Fatal(err)

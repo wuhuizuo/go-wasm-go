@@ -1,13 +1,15 @@
-package runner
+package wasmer
 
 import (
 	"fmt"
 	"io/ioutil"
+	"runtime/debug"
 	"testing"
 )
 
-// getWasmFuncWithWasmer parse wasm function with wasmer.
-func getGoWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) interface{} {
+// GetGoWasmFuncWithWasmer parse wasm function with wasmer.
+func GetGoWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) interface{} {
+	debug.SetGCPercent(-1)
 	binary, err := ioutil.ReadFile(wasmFile)
 	if err != nil {
 		t.Fatal(err)
@@ -28,8 +30,8 @@ func getGoWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) interface{
 	return fn
 }
 
-// callGoWASMFuncWithWasmer call test func with wasmer loaded func.
-func callGoWASMFuncWithWasmer(t testing.TB, fn interface{}, args []interface{}) interface{} {
+// CallGoWASMFuncWithWasmer call test func with wasmer loaded func.
+func CallGoWASMFuncWithWasmer(t testing.TB, fn interface{}, args []interface{}) interface{} {
 	switch v := fn.(type) {
 	case func([]interface{}) interface{}:
 		return v(args)

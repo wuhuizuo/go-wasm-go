@@ -8,11 +8,12 @@ import (
 
 	"github.com/wuhuizuo/go-wasm-go/provider/jsgoja"
 	"github.com/wuhuizuo/go-wasm-go/provider/native"
+
+	"github.com/wuhuizuo/go-wasm-go/runner/plugin"
+	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmedge"
+	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmer"
+	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wazero"
 )
-
-func Benchmark_plugin_multi_thread(b *testing.B) {
-
-}
 
 func Benchmark_fibonacci_single_10(b *testing.B) {
 	benchmark_fibonacci_single(b, 1)
@@ -60,7 +61,7 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 
 	b.Run(fmt.Sprintf("plugin - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
-			soFn := newGoPluginAlgFn(b, filepath.Join(selfDir(b), "..", goPluginSo), fibFuncName)
+			soFn := plugin.NewGoPluginAlgFn(b, filepath.Join(selfDir(b), "..", goPluginSo), fibFuncName)
 			for pb.Next() {
 				soFn(fbIn)
 			}
@@ -70,28 +71,28 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 	b.Run(fmt.Sprintf("wasm-wazero - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
 			// 必须在线程里面加载, 不能在线程外加载，然后并发.
-			store := newWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+			store := wazero.NewWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 			for pb.Next() {
-				callWASMFuncWithWazero(b, store, fibFuncName, uint64(fbIn))
+				wazero.CallWASMFuncWithWazero(b, store, fibFuncName, uint64(fbIn))
 			}
 		})
 	})
 
 	b.Run(fmt.Sprintf("wasm-wasmer - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
-			wasmFn := getWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
+			wasmFn := wasmer.GetWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
 			for pb.Next() {
-				callWASMFuncWithWasmer(b, wasmFn, fbIn)
+				wasmer.CallWASMFuncWithWasmer(b, wasmFn, fbIn)
 			}
 		})
 	})
 	b.Run(fmt.Sprintf("wasm-wasmedge - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
-			vm, conf := getWasmedgeInstance(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+			vm, conf := wasmedge.GetWasmedgeInstance(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 			defer vm.Release()
 			defer conf.Release()
 			for pb.Next() {
-				callWASMFuncWithWasmedgeReturnInt32(b, vm, fibFuncName, fbIn)
+				wasmedge.CallWASMFuncWithWasmedgeReturnInt32(b, vm, fibFuncName, fbIn)
 			}
 		})
 	})
@@ -116,7 +117,7 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("plugin - fb(%d)", fbIn), func(b *testing.B) {
-		soFn := newGoPluginAlgFn(b, filepath.Join(selfDir(b), "..", goPluginSo), fibFuncName)
+		soFn := plugin.NewGoPluginAlgFn(b, filepath.Join(selfDir(b), "..", goPluginSo), fibFuncName)
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
@@ -125,30 +126,30 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wazero - fb(%d)", fbIn), func(b *testing.B) {
-		store := newWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+		store := wazero.NewWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			callWASMFuncWithWazero(b, store, fibFuncName, uint64(fbIn))
+			wazero.CallWASMFuncWithWazero(b, store, fibFuncName, uint64(fbIn))
 		}
 	})
 
 	b.Run(fmt.Sprintf("wasm-wasmer - fb(%d)", fbIn), func(b *testing.B) {
-		wasmFn := getWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
+		wasmFn := wasmer.GetWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			callWASMFuncWithWasmer(b, wasmFn, fbIn)
+			wasmer.CallWASMFuncWithWasmer(b, wasmFn, fbIn)
 		}
 	})
 	b.Run(fmt.Sprintf("wasm-wasmedge - fb(%d)", fbIn), func(b *testing.B) {
-		vm, conf := getWasmedgeInstance(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+		vm, conf := wasmedge.GetWasmedgeInstance(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 		defer vm.Release()
 		defer conf.Release()
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			callWASMFuncWithWasmedgeReturnInt32(b, vm, fibFuncName, fbIn)
+			wasmedge.CallWASMFuncWithWasmedgeReturnInt32(b, vm, fibFuncName, fbIn)
 		}
 	})
 
