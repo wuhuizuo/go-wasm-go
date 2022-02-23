@@ -12,9 +12,8 @@ const (
 	goPluginSo                = "provider/plugin/ok/plugin.so"
 	goPluginSoThird           = "provider/plugin/third/plugin.so"
 	goPluginSoThirdDiffModVer = "provider/plugin/third_diff_mod_ver/plugin.so"
-	goPluginSo_1_15           = "provider/plugin/ok/plugin-1.15.so"
-	goPluginSo_1_16           = "provider/plugin/ok/plugin-1.16.so"
-	goPluginSo_1_17_1         = "provider/plugin/ok/plugin-1.17.1.so"
+	goPluginSo_1_16_14        = "provider/plugin/ok/plugin-1.16.14.so"
+	goPluginSo_1_17_7         = "provider/plugin/ok/plugin-1.17.7.so"
 )
 
 func TestPlugin(t *testing.T) {
@@ -32,22 +31,16 @@ func TestPlugin(t *testing.T) {
 		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSoThirdDiffModVer))
 	})
 
-	t.Run("1.17.3 call plugin compiled in 1.17.1", func(t *testing.T) {
+	t.Run("1.17.3 call plugin compiled in 1.17.7", func(t *testing.T) {
 		t.Skip("调不了")
 
-		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo_1_17_1))
+		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo_1_17_7))
 	})
 
-	t.Run("1.17 call plugin compiled in 1.16", func(t *testing.T) {
+	t.Run("1.17 call plugin compiled in 1.16.14", func(t *testing.T) {
 		t.Skip("调不了")
 
-		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo_1_16))
-	})
-
-	t.Run("1.17 call plugin compiled in 1.15", func(t *testing.T) {
-		t.Skip("调不了")
-
-		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo_1_15))
+		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo_1_16_14))
 	})
 }
 
