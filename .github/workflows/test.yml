@@ -21,6 +21,9 @@ jobs:
     - uses: extractions/setup-just@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install tools
+      run: just install_tools
       
     - name: Build
       run: just build
