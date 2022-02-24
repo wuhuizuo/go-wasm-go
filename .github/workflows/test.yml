@@ -23,7 +23,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Install tools
-      run: sudo just install_tools
+      run: just install_tools
       
     - name: Build
       run: just build
