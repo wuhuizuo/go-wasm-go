@@ -33,8 +33,8 @@ build_plugin_ver VER:
 install_tools: install_wasmedge install_tinygo
 
 install_wasmedge:
-    wget -qO- https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash -s -- -v {{wasmedge_version}} -e all -p /usr/local/ -r yes
+    wget -qO- https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | sudo bash -s -- -v {{wasmedge_version}} -e all -p /usr/local/ -r yes
 
 install_tinygo:    
-    wget -qO- https://github.com/tinygo-org/tinygo/releases/download/v{{tinygo_ver}}/tinygo{{tinygo_ver}}.linux-amd64.tar.gz | tar -zxf - -C /usr/local/
-    echo 'PATH=$PATH:/usr/local/tinygo/bin' > /etc/profile.d/tinygo.sh
+    wget -qO- https://github.com/tinygo-org/tinygo/releases/download/v{{tinygo_ver}}/tinygo{{tinygo_ver}}.linux-amd64.tar.gz | sudo tar -zxf - -C /usr/local/
+    sudo echo 'PATH=$PATH:/usr/local/tinygo/bin' > /etc/profile.d/tinygo.sh
