@@ -37,4 +37,4 @@ install_wasmedge:
 
 install_tinygo:    
     wget -qO- https://github.com/tinygo-org/tinygo/releases/download/v{{tinygo_ver}}/tinygo{{tinygo_ver}}.linux-amd64.tar.gz | sudo tar -zxf - -C /usr/local/
-    sudo echo 'PATH=$PATH:/usr/local/tinygo/bin' > /etc/profile.d/tinygo.sh
+    echo 'PATH=$PATH:/usr/local/tinygo/bin' | sudo tee /etc/profile.d/tinygo.sh
