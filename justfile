@@ -33,7 +33,7 @@ build_plugin_ver VER:
 install_tools: install_wasmedge_shared_lib install_tinygo
 
 install_wasmedge_shared_lib:
-    wget -qO- https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash -s -- -v {{wasmedge_version}} -e all -p /usr/local/ -r yes
+    wget -qO- https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash -s -- -v {{wasmedge_version}} -e all -r yes
 
 install_tinygo:    
     wget -qO- https://github.com/tinygo-org/tinygo/releases/download/v{{tinygo_ver}}/tinygo{{tinygo_ver}}.linux-amd64.tar.gz | tar -zxf - -C /usr/local/
