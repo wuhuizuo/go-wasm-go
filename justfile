@@ -1,5 +1,5 @@
-wasmedge_version := "0.9.0"
-tinygo_ver := "0.21.0"
+wasmedge_version := "0.9.2"
+tinygo_ver := "0.22.0"
  
 build: build_wasm_tinygo build_wasm_go build_plugin-all
 
@@ -17,9 +17,8 @@ build_plugin-all:
     just build_plugin plugin/ok
     just build_plugin plugin/third
     just build_plugin plugin/third_diff_mod_ver
-    just build_plugin_ver 1.15
-    just build_plugin_ver 1.16
-    just build_plugin_ver 1.17.1
+    just build_plugin_ver 1.16.14
+    just build_plugin_ver 1.17.7
 
 build_plugin TARGET:
     #!/usr/bin/env sh
