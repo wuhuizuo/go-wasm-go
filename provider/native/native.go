@@ -1,5 +1,7 @@
 package native
 
+import "fmt"
+
 // go wasm 中不能调用的:
 // import "fmt"
 
@@ -15,6 +17,7 @@ func RequestHTTP() int32 {
 	// fmt.Println("RequestHTTP")
 }
 
+// current not support in WASI.
 /*
 func RequestHTTP() {
 	httpTestURL := `https://www.baidu.com`
@@ -42,6 +45,7 @@ func FileIO() int32 {
 	// fmt.Println("FileIO")
 }
 
+// current not support in WASI.
 /*
 func FileIO() error {
 	dir, err := ioutil.TempDir("", "test-*")
@@ -86,6 +90,7 @@ func MultiThreads(num int32) int32 {
 	// fmt.Println("MultiThreads")
 }
 
+// current not support in WASI.
 /*
 func MultiThreads(num int32) {
 	g := new(errgroup.Group)
@@ -100,3 +105,21 @@ func MultiThreads(num int32) {
 	g.Wait()
 }
 */
+
+// BytesTest test for byte slice args and returns.
+func BytesTest(in []byte) []byte {
+	println(fmt.Sprintln(in))
+	return append(in, '-', '-', '-')
+}
+
+// InterfaceTest test for interface{} args and returns.
+func InterfaceTest(in interface{}) interface{} {
+	println(in)
+	return fmt.Sprintf("%v -- %s", in, "---")
+}
+
+// ErrTest test for err args and returns.
+func ErrTest(in error) error {
+	println(in)
+	return fmt.Errorf("%v---", in)
+}

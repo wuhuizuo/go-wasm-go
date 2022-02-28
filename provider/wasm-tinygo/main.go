@@ -25,3 +25,18 @@ func FileIO() int32 {
 func MultiThreads(num int32) int32 {
 	return native.MultiThreads(num)
 }
+
+//export BytesTest
+func BytesTest(in []byte) []byte {
+	return native.BytesTest(in)
+}
+
+//export InterfaceTest
+func InterfaceTest(in interface{}) interface{} {
+	return native.InterfaceTest(in)
+}
+
+//export ErrTest
+func ErrTest(in error) error {
+	return native.ErrTest(in)
+}

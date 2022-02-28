@@ -13,7 +13,7 @@ func GetWasmFuncWithWasmtime(t testing.TB, wasmFile, funcName string) (*wasmtime
 
 	// After we've instantiated we can lookup our `run` function and call
 	// it.
-	fn := instance.GetExport(store, funcName).Func()
+	fn := instance.GetFunc(store, funcName)
 	if fn == nil {
 		panic("no exported func: " + funcName)
 	}
@@ -42,6 +42,9 @@ func newWasiStore() *wasmtime.Store {
 
 	// wasi setting.
 	wasiConfig := wasmtime.NewWasiConfig()
+	wasiConfig.InheritStdout()
+	wasiConfig.InheritStderr()
+	wasiConfig.InheritStdin()
 	wasiConfig.InheritEnv()
 	wasiConfig.SetEnv([]string{"WASMTIME"}, []string{"GO"})
 	store.SetWasi(wasiConfig)

@@ -23,6 +23,16 @@ func Test_wasmtime_tinygo(t *testing.T) {
 			})
 		}
 	})
+
+	t.Run("arg types", func(t *testing.T) {
+		t.Skip("FIXME: how to passing byte slice args to wasm func.")
+		store, fn := wasmtime.GetWasmFuncWithWasmtime(t, filepath.Join(selfDir(t), "..", wasmTinygo), typeFuncName)
+
+		got, err := fn.Call(store, 0, 0, 0, 0)
+		t.Log(got)
+		assert.NoError(t, err)
+		assert.True(t, false)
+	})
 }
 
 func Test_wasmtime_go(t *testing.T) {
