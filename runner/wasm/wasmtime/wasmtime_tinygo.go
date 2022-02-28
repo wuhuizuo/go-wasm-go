@@ -1,7 +1,6 @@
 package wasmtime
 
 import (
-	"io/ioutil"
 	"testing"
 
 	"github.com/bytecodealliance/wasmtime-go"
@@ -9,28 +8,8 @@ import (
 
 // GetWasmFuncWithWasmtime get wasm func with wasmtime.
 func GetWasmFuncWithWasmtime(t testing.TB, wasmFile, funcName string) (*wasmtime.Store, *wasmtime.Func) {
-	binary, err := ioutil.ReadFile(wasmFile)
-	check(err)
-
-	cc := wasmtime.NewConfig()
-	cc.SetInterruptable(true)
-	// Almost all operations in wasmtime require a contextual `store`
-	// argument to share, so create that first
-	store := wasmtime.NewStore(wasmtime.NewEngineWithConfig(cc))
-	wasiConfig := wasmtime.NewWasiConfig()
-	wasiConfig.SetEnv([]string{"WASMTIME"}, []string{"GO"})
-	store.SetWasi(wasiConfig)
-
-	// Once we have our binary `wasm` we can compile that into a `*Module`
-	// which represents compiled JIT code.
-	module, err := wasmtime.NewModule(store.Engine, binary)
-	check(err)
-	module.AsExtern()
-
-	// Next up we instantiate a module which is where we link in all our
-	// imports. We've got one import so we pass that in here.
-	instance, err := wasmtime.NewInstance(store, module, nil)
-	check(err)
+	store := newWasiStore()
+	instance := newWasiInstance(store, wasmFile)
 
 	// After we've instantiated we can lookup our `run` function and call
 	// it.
@@ -42,8 +21,30 @@ func GetWasmFuncWithWasmtime(t testing.TB, wasmFile, funcName string) (*wasmtime
 	return store, fn
 }
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
+func newWasiInstance(store *wasmtime.Store, file string) *wasmtime.Instance {
+	module, err := wasmtime.NewModuleFromFile(store.Engine, file)
+	check(err)
+
+	linker := wasmtime.NewLinker(store.Engine)
+	check(linker.DefineWasi())
+	instance, err := linker.Instantiate(store, module)
+	check(err)
+
+	return instance
+}
+
+func newWasiStore() *wasmtime.Store {
+	config := wasmtime.NewConfig()
+	config.SetInterruptable(true)
+
+	engine := wasmtime.NewEngineWithConfig(config)
+	store := wasmtime.NewStore(engine)
+
+	// wasi setting.
+	wasiConfig := wasmtime.NewWasiConfig()
+	wasiConfig.InheritEnv()
+	wasiConfig.SetEnv([]string{"WASMTIME"}, []string{"GO"})
+	store.SetWasi(wasiConfig)
+
+	return store
 }

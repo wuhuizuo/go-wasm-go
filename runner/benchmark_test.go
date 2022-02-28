@@ -12,11 +12,12 @@ import (
 	"github.com/wuhuizuo/go-wasm-go/runner/plugin"
 	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmedge"
 	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmer"
+	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmtime"
 	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wazero"
 )
 
 func Benchmark_fibonacci_single_10(b *testing.B) {
-	benchmark_fibonacci_single(b, 1)
+	benchmark_fibonacci_single(b, 10)
 }
 
 func Benchmark_fibonacci_single_20(b *testing.B) {
@@ -30,6 +31,7 @@ func Benchmark_fibonacci_single_30(b *testing.B) {
 func Benchmark_fibonacci_single_40(b *testing.B) {
 	benchmark_fibonacci_single(b, 40)
 }
+
 func Benchmark_fibonacci_paralle_10(b *testing.B) {
 	benchmark_fibonacci_paralle(b, 10)
 }
@@ -68,10 +70,22 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 		})
 	})
 
+	b.Run(fmt.Sprintf("wasm-wasmtime - fb(%d)", fbIn), func(b *testing.B) {
+		b.RunParallel(func(pb *testing.PB) {
+			store, fn := wasmtime.GetWasmFuncWithWasmtime(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
+
+			for pb.Next() {
+				fn.Call(store, fbIn)
+			}
+		})
+
+	})
+
 	b.Run(fmt.Sprintf("wasm-wazero - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
 			// 必须在线程里面加载, 不能在线程外加载，然后并发.
 			exports := wazero.NewWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+
 			for pb.Next() {
 				wazero.CallWASMFuncWithWazero(b, exports, fibFuncName, uint64(fbIn))
 			}
@@ -79,6 +93,7 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wasmer - fb(%d)", fbIn), func(b *testing.B) {
+		b.Skip()
 		b.RunParallel(func(pb *testing.PB) {
 			wasmFn := wasmer.GetWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
 			for pb.Next() {
@@ -86,7 +101,9 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 			}
 		})
 	})
+
 	b.Run(fmt.Sprintf("wasm-wasmedge - fb(%d)", fbIn), func(b *testing.B) {
+		b.Skip("unexpected signal during runtime execution")
 		b.RunParallel(func(pb *testing.PB) {
 			vm, conf := wasmedge.GetWasmedgeInstance(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 			defer vm.Release()
@@ -125,6 +142,19 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 		}
 	})
 
+	b.Run(fmt.Sprintf("wasm-wasmtime - fb(%d)", fbIn), func(b *testing.B) {
+		store, fn := wasmtime.GetWasmFuncWithWasmtime(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
+		b.ResetTimer()
+
+		for i := 0; i < b.N; i++ {
+			store.Context()
+			fn.Call(store, fbIn)
+			// ret, err := fn.Call(store, int32(fbIn))
+			// b.Log(ret)
+			// assert.NoError(b, err)
+		}
+	})
+
 	b.Run(fmt.Sprintf("wasm-wazero - fb(%d)", fbIn), func(b *testing.B) {
 		exports := wazero.NewWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 		b.ResetTimer()
@@ -135,6 +165,7 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wasmer - fb(%d)", fbIn), func(b *testing.B) {
+		b.Skip("unexpected signal during runtime execution")
 		wasmFn := wasmer.GetWasmFuncWithWasmer(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
 		b.ResetTimer()
 
