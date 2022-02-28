@@ -8,7 +8,6 @@ import (
 
 	"github.com/wuhuizuo/go-wasm-go/provider/jsgoja"
 	"github.com/wuhuizuo/go-wasm-go/provider/native"
-
 	"github.com/wuhuizuo/go-wasm-go/runner/plugin"
 	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmedge"
 	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmer"

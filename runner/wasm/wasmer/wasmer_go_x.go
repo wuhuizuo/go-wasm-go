@@ -461,16 +461,16 @@ func goRuntime(store *wasmer.Store, data *GoInstance) map[string]wasmer.IntoExte
 			store,
 			wasmer.NewFunctionType(wasmer.NewValueTypes(wasmer.I32), wasmer.NewValueTypes()),
 			func(args []wasmer.Value) ([]wasmer.Value, error) {
-				//println("syscall/js.valueCall")
 				sp := args[0].I32()
 				sp >>= 0
 				v := reflect.ValueOf(data.loadValue(sp + 8))
 				if !v.IsValid() {
 					return nil, errors.New("cannot call on nil value")
 				}
+
 				method := v.MapIndex(reflect.ValueOf(data.loadString(sp + 16)))
-				if !v.IsValid() {
-					return nil, errors.New("cannot find method on the value")
+				if !method.IsValid() {
+					return nil, fmt.Errorf("cannot find method %s on the value", data.loadString(sp+16))
 				}
 				result := method.Elem().Call([]reflect.Value{reflect.ValueOf(data.loadSliceOfValues(sp + 32))})
 				if v, err := data.getsp(); err == nil {
