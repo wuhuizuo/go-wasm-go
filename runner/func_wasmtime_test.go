@@ -10,12 +10,12 @@ import (
 )
 
 func Test_wasmtime_tinygo(t *testing.T) {
-	t.Run("algorithm", func(t *testing.T) {
-		store, fn := wasmtime.GetWasmFuncWithWasmtime(t, filepath.Join(selfDir(t), "..", wasmTinygo), fibFuncName)
+	store, instance := wasmtime.GetWasmFuncWithWasmtime(t, filepath.Join(selfDir(t), "..", wasmTinygo))
 
+	t.Run("algorithm", func(t *testing.T) {
 		for _, tt := range fibTests {
 			t.Run(tt.name, func(t *testing.T) {
-				got, err := fn.Call(store, tt.in)
+				got, err := wasmtime.CallWasmFunc(t, store, instance, fibFuncName, tt.in)
 
 				assert.NoError(t, err)
 				assert.IsType(t, tt.want, got)
@@ -24,14 +24,18 @@ func Test_wasmtime_tinygo(t *testing.T) {
 		}
 	})
 
-	t.Run("arg types", func(t *testing.T) {
-		t.Skip("FIXME: how to passing byte slice args to wasm func.")
-		store, fn := wasmtime.GetWasmFuncWithWasmtime(t, filepath.Join(selfDir(t), "..", wasmTinygo), typeFuncName)
-
-		got, err := fn.Call(store, 0, 0, 0, 0)
-		t.Log(got)
+	t.Run("bytes test", func(t *testing.T) {
+		inPtr, inSize, inCap := wasmtime.TransInBytesParam(store, instance, []byte("hello"))
+		got, err := wasmtime.CallWasmFunc(t, store, instance, byteInOutFuncName, inPtr, inSize, inCap)
+		t.Log(got, err)
 		assert.NoError(t, err)
-		assert.True(t, false)
+
+		outSize, err := wasmtime.CallWasmFunc(t, store, instance, byteInOutLenFuncName)
+		t.Log(outSize, err)
+		assert.NoError(t, err)
+
+		out := wasmtime.ReadOutBytesReturn(store, instance, got.(int32), outSize.(int32))
+		assert.Equal(t, []byte("hello---"), out)
 	})
 }
 

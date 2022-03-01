@@ -1,6 +1,12 @@
 package main
 
-import "github.com/wuhuizuo/go-wasm-go/provider/native"
+import (
+	"unsafe"
+
+	"github.com/wuhuizuo/go-wasm-go/provider/native"
+)
+
+var buffer []byte
 
 func main() {
 	// nothing.
@@ -27,8 +33,14 @@ func MultiThreads(num int32) int32 {
 }
 
 //export BytesTest
-func BytesTest(in []byte) []byte {
-	return native.BytesTest(in)
+func BytesTest(in []byte) int32 {
+	buffer = native.BytesTest(in)
+	return *(*int32)(unsafe.Pointer(&buffer))
+}
+
+//export BytesTestLen
+func BytesTestLen() int32 {
+	return int32(len(buffer))
 }
 
 //export InterfaceTest

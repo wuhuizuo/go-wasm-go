@@ -7,18 +7,19 @@ import (
 )
 
 // GetWasmFuncWithWasmtime get wasm func with wasmtime.
-func GetWasmFuncWithWasmtime(t testing.TB, wasmFile, funcName string) (*wasmtime.Store, *wasmtime.Func) {
+func GetWasmFuncWithWasmtime(t testing.TB, wasmFile string) (*wasmtime.Store, *wasmtime.Instance) {
 	store := newWasiStore()
 	instance := newWasiInstance(store, wasmFile)
+	return store, instance
+}
 
-	// After we've instantiated we can lookup our `run` function and call
-	// it.
+func CallWasmFunc(t testing.TB, store *wasmtime.Store, instance *wasmtime.Instance, funcName string, args ...interface{}) (interface{}, error) {
 	fn := instance.GetFunc(store, funcName)
 	if fn == nil {
 		panic("no exported func: " + funcName)
 	}
 
-	return store, fn
+	return fn.Call(store, args...)
 }
 
 func newWasiInstance(store *wasmtime.Store, file string) *wasmtime.Instance {
@@ -36,6 +37,9 @@ func newWasiInstance(store *wasmtime.Store, file string) *wasmtime.Instance {
 func newWasiStore() *wasmtime.Store {
 	config := wasmtime.NewConfig()
 	config.SetInterruptable(true)
+	config.SetWasmReferenceTypes(true)
+	config.SetWasmThreads(true)
+	config.SetWasmBulkMemory(true)
 
 	engine := wasmtime.NewEngineWithConfig(config)
 	store := wasmtime.NewStore(engine)
