@@ -10,12 +10,13 @@ import (
 )
 
 func Test_wazero_tinygo(t *testing.T) {
-	store := wazero.NewWASMStoreWithWazero(t, filepath.Join(selfDir(t), "..", wasmTinygo))
+	mod, closer := wazero.NewWASMStoreWithWazero(t, filepath.Join(selfDir(t), "..", wasmTinygo))
+	defer closer()
 
 	t.Run("algorithm", func(t *testing.T) {
 		for _, tt := range fibTests {
 			t.Run(tt.name, func(t *testing.T) {
-				if got := wazero.CallWASMFuncWithWazero(t, store, fibFuncName, uint64(tt.in)); int32(got[0]) != tt.want {
+				if got := wazero.CallWASMFuncWithWazero(t, mod, fibFuncName, uint64(tt.in)); int32(got[0]) != tt.want {
 					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
 				}
 			})
@@ -23,29 +24,30 @@ func Test_wazero_tinygo(t *testing.T) {
 	})
 
 	t.Run("http request", func(t *testing.T) {
-		got := wazero.CallWASMFuncWithWazero(t, store, httpReqFuncName)
+		got := wazero.CallWASMFuncWithWazero(t, mod, httpReqFuncName)
 		assert.Len(t, got, 1)
 	})
 
 	t.Run("file io", func(t *testing.T) {
-		got := wazero.CallWASMFuncWithWazero(t, store, ioFunName)
+		got := wazero.CallWASMFuncWithWazero(t, mod, ioFunName)
 		assert.Len(t, got, 1)
 	})
 
 	t.Run("multi threads", func(t *testing.T) {
-		got := wazero.CallWASMFuncWithWazero(t, store, multiThreadsFuncName, 4)
+		got := wazero.CallWASMFuncWithWazero(t, mod, multiThreadsFuncName, 4)
 		assert.Len(t, got, 1)
 	})
 }
 
 func Test_wazero_go(t *testing.T) {
 	t.Skip("not found func")
-	store := wazero.NewGoWASMStoreWithWazero(t, filepath.Join(selfDir(t), "..", wasmGo))
+	mod, closer := wazero.NewGoWASMStoreWithWazero(t, filepath.Join(selfDir(t), "..", wasmGo))
+	defer closer()
 
 	t.Run("algorithm", func(t *testing.T) {
 		for _, tt := range fibTests {
 			t.Run(tt.name, func(t *testing.T) {
-				if got := wazero.CallGoWASMFuncWithWazero(t, store, fibFuncName, uint64(tt.in)); int32(got[0]) != tt.want {
+				if got := wazero.CallGoWASMFuncWithWazero(t, mod, fibFuncName, uint64(tt.in)); int32(got[0]) != tt.want {
 					t.Errorf("Fibonacci() = %v, want %v", got, tt.want)
 				}
 			})
@@ -53,17 +55,17 @@ func Test_wazero_go(t *testing.T) {
 	})
 
 	t.Run("http request", func(t *testing.T) {
-		got := wazero.CallGoWASMFuncWithWazero(t, store, httpReqFuncName)
+		got := wazero.CallGoWASMFuncWithWazero(t, mod, httpReqFuncName)
 		assert.Len(t, got, 1)
 	})
 
 	t.Run("file io", func(t *testing.T) {
-		got := wazero.CallGoWASMFuncWithWazero(t, store, ioFunName)
+		got := wazero.CallGoWASMFuncWithWazero(t, mod, ioFunName)
 		assert.Len(t, got, 1)
 	})
 
 	t.Run("multi threads", func(t *testing.T) {
-		got := wazero.CallGoWASMFuncWithWazero(t, store, multiThreadsFuncName, 4)
+		got := wazero.CallGoWASMFuncWithWazero(t, mod, multiThreadsFuncName, 4)
 		assert.Len(t, got, 1)
 	})
 }

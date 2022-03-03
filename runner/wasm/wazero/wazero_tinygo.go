@@ -10,34 +10,43 @@ import (
 
 const wazeroModName = "wasmtest"
 
-// NewWASMStoreWithWazero prepare for wazero wasm store.
-func NewWASMStoreWithWazero(b testing.TB, wasmFile string) wasm.ModuleExports {
+// NewWASMStoreWithWazero prepare for wazero wasm runtime.
+func NewWASMStoreWithWazero(b testing.TB, wasmFile string) (wasm.Module, func() error) {
 	binary, err := os.ReadFile(wasmFile)
 	if err != nil {
 		b.Fatal(err)
 	}
 
-	store := wazero.NewStoreWithConfig(&wazero.StoreConfig{Engine: wazero.NewEngineJIT()})
+	runtime := wazero.NewRuntime()
 
-	_, err = wazero.InstantiateHostModule(store, wazero.WASISnapshotPreview1())
+	wasi, err := runtime.InstantiateModule(wazero.WASISnapshotPreview1())
 	if err != nil {
+		wasi.Close()
 		b.Fatal(err)
 	}
 
-	exports, err := wazero.InstantiateModule(store, &wazero.ModuleConfig{
-		Name:   wazeroModName,
-		Source: binary,
-	})
+	decoded, err := runtime.CompileModule(binary)
 	if err != nil {
+		wasi.Close()
 		b.Fatal(err)
 	}
 
-	return exports
+	module, err := runtime.InstantiateModule(decoded.WithName(wazeroModName))
+	if err != nil {
+		wasi.Close()
+		b.Fatal(err)
+	}
+
+	return module, func() (err error) {
+		module.Close()
+		wasi.Close()
+		return
+	}
 }
 
 // CallWASMFuncWithWazero call test func with wazero loader.
-func CallWASMFuncWithWazero(t testing.TB, exports wasm.ModuleExports, funcName string, args ...uint64) []uint64 {
-	ret, err := exports.Function(funcName).Call(nil, args...)
+func CallWASMFuncWithWazero(t testing.TB, module wasm.Module, funcName string, args ...uint64) []uint64 {
+	ret, err := module.ExportedFunction(funcName).Call(nil, args...)
 	if err != nil {
 		t.Fatal(err)
 	}
