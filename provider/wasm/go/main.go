@@ -6,7 +6,7 @@ import (
 	"github.com/wuhuizuo/go-wasm-go/provider/native"
 )
 
-//go:generate GOOS=js GOARCH=wasm go build -o wasm.wasm
+//go:generate env GOOS=js GOARCH=wasm go build -o wasm.wasm
 
 func main() {
 	js.Global().Set("Fibonacci", js.FuncOf(Wrap(native.Fibonacci)))

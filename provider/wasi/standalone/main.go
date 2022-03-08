@@ -6,9 +6,7 @@ import (
 	"github.com/wuhuizuo/go-wasm-go/provider/native"
 )
 
-//go:generate tinygo build -o wasi.wasm -target wasi
-
-var buffer []byte
+//go:generate tinygo build -target wasi -wasm-abi=generic -o wasi.wasm
 
 func main() {
 	// nothing.
@@ -34,15 +32,13 @@ func MultiThreads(num int32) int32 {
 	return native.MultiThreads(num)
 }
 
+// BytesTest return int64, first 4bytes present pointer, last 4bytes present data length.
 //export BytesTest
-func BytesTest(in []byte) int32 {
-	buffer = native.BytesTest(in)
-	return *(*int32)(unsafe.Pointer(&buffer))
-}
+func BytesTest(in []byte) int64 {
+	buffer := native.BytesTest(in)
+	ptr := *(*int32)(unsafe.Pointer(&buffer))
 
-//export BytesTestLen
-func BytesTestLen() int32 {
-	return int32(len(buffer))
+	return int64(ptr)<<32 | int64(len(buffer))
 }
 
 //export InterfaceTest

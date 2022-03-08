@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	wasi   = "provider/wasi/wasi.wasm"
-	wasmGo = "provider/wasm/go/wasm.wasm"
+	wasi       = "provider/wasi/standalone/wasi.wasm"
+	wasiParent = "provider/wasi/parent/wasi.wasm"
+	wasmGo     = "provider/wasm/go/wasm.wasm"
 )
 
 const (
@@ -17,7 +18,6 @@ const (
 	ioFunName            = "FileIO"
 	multiThreadsFuncName = "MultiThreads"
 	byteInOutFuncName    = "BytesTest"
-	byteInOutLenFuncName = "BytesTestLen"
 )
 
 var fibTests = []fibTestItem{

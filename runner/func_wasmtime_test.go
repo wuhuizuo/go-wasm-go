@@ -32,11 +32,8 @@ func Test_wasmtime_tinygo(t *testing.T) {
 		t.Log(got, err)
 		assert.NoError(t, err)
 
-		outSize, err := wasmtime.CallWasmFunc(t, store, instance, byteInOutLenFuncName)
-		t.Log(outSize, err)
-		assert.NoError(t, err)
-
-		out := wasmtime.ReadOutBytesReturn(store, instance, got.(int32), outSize.(int32))
+		outPtr, outLen := int32(got.(int64)>>32), int32(got.(int64))
+		out := wasmtime.ReadOutBytesReturn(store, instance, outPtr, outLen)
 		assert.Equal(t, []byte("hello---"), out)
 	})
 }
