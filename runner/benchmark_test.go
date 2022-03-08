@@ -8,7 +8,6 @@ import (
 
 	"github.com/wuhuizuo/go-wasm-go/provider/jsgoja"
 	"github.com/wuhuizuo/go-wasm-go/provider/native"
-
 	"github.com/wuhuizuo/go-wasm-go/runner/plugin"
 	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmedge"
 	"github.com/wuhuizuo/go-wasm-go/runner/wasm/wasmer"
@@ -72,10 +71,10 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 
 	b.Run(fmt.Sprintf("wasm-wasmtime - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
-			store, fn := wasmtime.GetWasmFuncWithWasmtime(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
+			store, instance := wasmtime.GetWasmFuncWithWasmtime(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 
 			for pb.Next() {
-				fn.Call(store, fbIn)
+				wasmtime.CallWasmFunc(b, store, instance, fibFuncName)
 			}
 		})
 
@@ -143,15 +142,11 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wasmtime - fb(%d)", fbIn), func(b *testing.B) {
-		store, fn := wasmtime.GetWasmFuncWithWasmtime(b, filepath.Join(selfDir(b), "..", wasmTinygo), fibFuncName)
+		store, instance := wasmtime.GetWasmFuncWithWasmtime(b, filepath.Join(selfDir(b), "..", wasmTinygo))
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			store.Context()
-			fn.Call(store, fbIn)
-			// ret, err := fn.Call(store, int32(fbIn))
-			// b.Log(ret)
-			// assert.NoError(b, err)
+			wasmtime.CallWasmFunc(b, store, instance, fibFuncName, fibFuncName, fbIn)
 		}
 	})
 

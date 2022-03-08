@@ -25,8 +25,8 @@ func NewWASMStoreWithWazero(b testing.TB, wasmFile string) wasm.ModuleExports {
 	}
 
 	exports, err := wazero.InstantiateModule(store, &wazero.ModuleConfig{
-		Name: wazeroModName,
-		Source:binary,
+		Name:   wazeroModName,
+		Source: binary,
 	})
 	if err != nil {
 		b.Fatal(err)

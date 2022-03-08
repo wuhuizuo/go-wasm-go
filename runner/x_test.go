@@ -16,6 +16,8 @@ const (
 	httpReqFuncName      = "RequestHTTP"
 	ioFunName            = "FileIO"
 	multiThreadsFuncName = "MultiThreads"
+	byteInOutFuncName    = "BytesTest"
+	byteInOutLenFuncName = "BytesTestLen"
 )
 
 var fibTests = []fibTestItem{

@@ -6,7 +6,7 @@ build: build_wasm_tinygo build_wasm_go build_plugin-all
 build_wasm_tinygo:
     #!/usr/bin/env sh
     cd provider/wasm-tinygo &&
-    tinygo build -target=wasi -o wasm.wasm
+    tinygo build -target=wasi -wasm-abi=generic -o wasm.wasm
 
 build_wasm_go:
     #!/usr/bin/env sh

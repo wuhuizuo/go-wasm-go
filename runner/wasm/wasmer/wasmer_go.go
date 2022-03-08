@@ -1,7 +1,6 @@
 package wasmer
 
 import (
-	"fmt"
 	"io/ioutil"
 	"runtime/debug"
 	"testing"
@@ -14,7 +13,6 @@ func GetGoWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) interface{
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println("---------------")
 
 	instance, err := NewInstance(binary)
 	if err != nil {
