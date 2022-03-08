@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	wasmTinygo = "provider/wasm-tinygo/wasm.wasm"
-	wasmGo     = "provider/wasm-go/wasm.wasm"
+	wasi   = "provider/wasi/wasi.wasm"
+	wasmGo = "provider/wasm/go/wasm.wasm"
 )
 
 const (

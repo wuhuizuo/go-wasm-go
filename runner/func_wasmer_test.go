@@ -22,7 +22,7 @@ func Test_wasmer_tinygo(t *testing.T) {
 				/usr/local/go/src/runtime/signal_unix.go:719 +0x396
 		`)
 
-		fn := wasmer.GetWasmFuncWithWasmer(t, filepath.Join(selfDir(t), "..", wasmTinygo), fibFuncName)
+		fn := wasmer.GetWasmFuncWithWasmer(t, filepath.Join(selfDir(t), "..", wasi), fibFuncName)
 
 		for _, tt := range fibTests {
 			t.Run(tt.name, func(t *testing.T) {

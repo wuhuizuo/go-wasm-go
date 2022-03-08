@@ -6,6 +6,8 @@ import (
 	"github.com/wuhuizuo/go-wasm-go/provider/native"
 )
 
+//go:generate tinygo build -o wasi.wasm -target wasi
+
 var buffer []byte
 
 func main() {

@@ -1,16 +1,22 @@
 wasmedge_version := "0.9.0"
 tinygo_ver := "0.22.0"
  
-build: build_wasm_tinygo build_wasm_go build_plugin-all
+build: build_wasi_tinygo build_wasm_tinygo build_wasm_go build_plugin-all
+
+build_wasi_tinygo:
+    #!/usr/bin/env sh
+
+    cd provider/wasi &&
+    tinygo build -target=wasi -wasm-abi=generic -o wasi.wasm
 
 build_wasm_tinygo:
     #!/usr/bin/env sh
-    cd provider/wasm-tinygo &&
-    tinygo build -target=wasi -wasm-abi=generic -o wasm.wasm
+    cd provider/wasm/tinygo &&
+    tinygo build -target=wasm -wasm-abi=generic -o wasm.wasm
 
 build_wasm_go:
     #!/usr/bin/env sh
-    cd provider/wasm-go
+    cd provider/wasm/go
     GOOS=js GOARCH=wasm go build -o wasm.wasm
 
 build_plugin-all: 
