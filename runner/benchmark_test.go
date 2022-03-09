@@ -71,10 +71,10 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 
 	b.Run(fmt.Sprintf("wasm-wasmtime - fb(%d)", fbIn), func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
-			store, instance := wasmtime.GetWasmFuncWithWasmtime(b, filepath.Join(selfDir(b), "..", wasi))
+			store, instance := wasmtime.GetRuntimes(b, filepath.Join(selfDir(b), "..", wasi), nil)
 
 			for pb.Next() {
-				wasmtime.CallWasmFunc(b, store, instance, fibFuncName)
+				wasmtime.CallFunc(b, store, instance, fibFuncName)
 			}
 		})
 
@@ -142,11 +142,11 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wasmtime - fb(%d)", fbIn), func(b *testing.B) {
-		store, instance := wasmtime.GetWasmFuncWithWasmtime(b, filepath.Join(selfDir(b), "..", wasi))
+		store, instance := wasmtime.GetRuntimes(b, filepath.Join(selfDir(b), "..", wasi), nil)
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			wasmtime.CallWasmFunc(b, store, instance, fibFuncName, fibFuncName, fbIn)
+			wasmtime.CallFunc(b, store, instance, fibFuncName, fibFuncName, fbIn)
 		}
 	})
 

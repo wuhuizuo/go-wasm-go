@@ -6,11 +6,11 @@ func main() {
 	// nothing.
 }
 
-//go:module standalone
+//go:wasm-module standalone
 //export Fibonacci
 func Fibonacci(in int32) int32
 
-//go:module standalone
+//go:wasm-module standalone
 //export BytesTest
 func BytesTest(in []byte) int64
 
@@ -19,7 +19,7 @@ func RunInt32(in int32) int32 {
 	return Fibonacci(in)
 }
 
-//export Run
+//export RunBytes
 func RunBytes(in []byte) int64 {
 	return BytesTest(in)
 }
