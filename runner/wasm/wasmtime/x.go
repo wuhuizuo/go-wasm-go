@@ -27,6 +27,21 @@ func TransInBytesParam(store *wasmtime.Store, instance *wasmtime.Instance, in []
 	return aret, size, size
 }
 
+func TransInStringParam(store *wasmtime.Store, instance *wasmtime.Instance, in string) (_, _ interface{}) {
+	// malloc memory space.
+	calloc := instance.GetFunc(store, "malloc")
+	aret, _ := calloc.Call(store, len(in))
+	start := int(aret.(int32))
+
+	// write to wasm vm memory.
+	bs := instance.GetExport(store, "memory").Memory().UnsafeData(store)
+	for i, c := range []byte(in) {
+		bs[start+i] = c
+	}
+
+	return aret, int32(len(in))
+}
+
 func TransOutBytesReturn(store *wasmtime.Store, instance *wasmtime.Instance, cap int32) (_, _, _ interface{}) {
 	// malloc memory space.
 	calloc := instance.GetFunc(store, "malloc")
@@ -39,4 +54,8 @@ func TransOutBytesReturn(store *wasmtime.Store, instance *wasmtime.Instance, cap
 
 func ReadOutBytesReturn(store *wasmtime.Store, instance *wasmtime.Instance, ptr, size int32) []byte {
 	return instance.GetExport(store, "memory").Memory().UnsafeData(store)[ptr : ptr+size]
+}
+
+func ReadOutStringReturn(store *wasmtime.Store, instance *wasmtime.Instance, ptr, size int32) string {
+	return string(instance.GetExport(store, "memory").Memory().UnsafeData(store)[ptr : ptr+size])
 }

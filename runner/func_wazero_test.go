@@ -10,7 +10,7 @@ import (
 )
 
 func Test_wazero_tinygo(t *testing.T) {
-	store := wazero.NewWASMStoreWithWazero(t, filepath.Join(selfDir(t), "..", wasmTinygo))
+	store := wazero.NewWASMStoreWithWazero(t, filepath.Join(selfDir(t), "..", wasi))
 
 	t.Run("algorithm", func(t *testing.T) {
 		for _, tt := range fibTests {

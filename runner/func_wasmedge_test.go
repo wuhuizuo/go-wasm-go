@@ -8,7 +8,7 @@ import (
 )
 
 func Test_wasmedge_tinygo(t *testing.T) {
-	vm, conf := wasmedge.GetWasmedgeInstance(t, filepath.Join(selfDir(t), "..", wasmTinygo))
+	vm, conf := wasmedge.GetWasmedgeInstance(t, filepath.Join(selfDir(t), "..", wasi))
 	defer vm.Release()
 	defer conf.Release()
 

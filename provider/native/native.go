@@ -108,8 +108,14 @@ func MultiThreads(num int32) {
 
 // BytesTest test for byte slice args and returns.
 func BytesTest(in []byte) []byte {
-	println(fmt.Sprintln(in))
+	println("-n-|", fmt.Sprint(in), "|---")
 	return append(in, '-', '-', '-')
+}
+
+// String test for string args and returns.
+func StringTest(in string) string {
+	println("-n-|", in, "|---")
+	return in + "---"
 }
 
 // InterfaceTest test for interface{} args and returns.
