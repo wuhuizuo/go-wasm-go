@@ -18,6 +18,7 @@ const (
 	ioFunName            = "FileIO"
 	multiThreadsFuncName = "MultiThreads"
 	byteInOutFuncName    = "BytesTest"
+	stringInOutFuncName  = "StringTest"
 )
 
 var fibTests = []fibTestItem{

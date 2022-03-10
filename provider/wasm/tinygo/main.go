@@ -46,6 +46,15 @@ func BytesTest(in []byte) int64 {
 	return int64(ptr)<<32 | int64(len(buffer))
 }
 
+// StringTest return int64, first 4bytes present pointer, last 4bytes present data length.
+//export StringTest
+func StringTest(in string) int64 {
+	buffer := native.StringTest(in)
+	ptr := *(*int32)(unsafe.Pointer(&buffer))
+
+	return int64(ptr)<<32 | int64(len(buffer))
+}
+
 //export InterfaceTest
 func InterfaceTest(in interface{}) interface{} {
 	return native.InterfaceTest(in)

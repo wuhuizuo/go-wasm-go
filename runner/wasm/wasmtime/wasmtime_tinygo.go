@@ -37,6 +37,7 @@ func newWasiInstance(store *wasmtime.Store, file string, deps map[string]string)
 	check(err)
 
 	linker := wasmtime.NewLinker(store.Engine)
+	linker.AllowShadowing(true)
 	check(linker.DefineWasi())
 
 	// import dependent modules
@@ -57,6 +58,7 @@ func newWasiStore() *wasmtime.Store {
 	config.SetWasmThreads(true)
 	config.SetWasmBulkMemory(true)
 	config.SetWasmModuleLinking(true)
+	config.SetWasmMultiMemory(true)
 
 	engine := wasmtime.NewEngineWithConfig(config)
 	store := wasmtime.NewStore(engine)

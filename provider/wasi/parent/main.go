@@ -8,18 +8,28 @@ func main() {
 
 //go:wasm-module standalone
 //export Fibonacci
-func Fibonacci(in int32) int32
+func _Fibonacci(in int32) int32
 
 //go:wasm-module standalone
 //export BytesTest
-func BytesTest(in []byte) int64
+func _BytesTest(in []byte) int64
 
-//export RunInt32
-func RunInt32(in int32) int32 {
-	return Fibonacci(in)
+//go:wasm-module standalone
+//export StringTest
+func _StringTest(in string) int64
+
+//export Fibonacci
+func Fibonacci(in int32) int32 {
+	return _Fibonacci(in)
 }
 
-//export RunBytes
-func RunBytes(in []byte) int64 {
-	return BytesTest(in)
+//export BytesTest
+func BytesTest(in []byte) int64 {
+	return _BytesTest(in)
+}
+
+//export StringTest
+func StringTest(in string) int64 {
+	println("-p--|", in, "|---")
+	return _StringTest(in)
 }

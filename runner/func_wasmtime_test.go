@@ -34,6 +34,17 @@ func Test_wasmtime_tinygo(t *testing.T) {
 		out := wasmtime.ReadOutBytesReturn(store, instance, outPtr, outLen)
 		assert.Equal(t, []byte("hello---"), out)
 	})
+
+	t.Run("string test", func(t *testing.T) {
+		inPtr, inSize := wasmtime.TransInStringParam(store, instance, "hello")
+		got, err := wasmtime.CallFunc(t, store, instance, stringInOutFuncName, inPtr, inSize)
+		t.Log(got, err)
+		assert.NoError(t, err)
+
+		outPtr, outLen := int32(got.(int64)>>32), int32(got.(int64))
+		out := wasmtime.ReadOutStringReturn(store, instance, outPtr, outLen)
+		assert.Equal(t, "hello---", out)
+	})
 }
 
 func Test_wasmtime_tinygo_moduleLinking(t *testing.T) {
@@ -45,7 +56,7 @@ func Test_wasmtime_tinygo_moduleLinking(t *testing.T) {
 	t.Run("algorithm", func(t *testing.T) {
 		for _, tt := range fibTests {
 			t.Run(tt.name, func(t *testing.T) {
-				got, err := wasmtime.CallFunc(t, store, instance, "RunInt32", tt.in)
+				got, err := wasmtime.CallFunc(t, store, instance, fibFuncName, tt.in)
 
 				assert.NoError(t, err)
 				assert.IsType(t, tt.want, got)
@@ -57,13 +68,25 @@ func Test_wasmtime_tinygo_moduleLinking(t *testing.T) {
 	t.Run("bytes test", func(t *testing.T) {
 		t.Skip("TODO:read/write memory cross modules was not supported")
 		inPtr, inSize, inCap := wasmtime.TransInBytesParam(store, instance, []byte("hello"))
-		got, err := wasmtime.CallFunc(t, store, instance, "RunBytes", inPtr, inSize, inCap)
+		got, err := wasmtime.CallFunc(t, store, instance, byteInOutFuncName, inPtr, inSize, inCap)
 		t.Log(got, err)
 		assert.NoError(t, err)
 
 		outPtr, outLen := int32(got.(int64)>>32), int32(got.(int64))
 		out := wasmtime.ReadOutBytesReturn(store, instance, outPtr, outLen)
 		assert.Equal(t, []byte("hello---"), out)
+	})
+
+	t.Run("string test", func(t *testing.T) {
+		t.Skip("TODO:read/write memory cross modules was not supported")
+		inPtr, inSize := wasmtime.TransInStringParam(store, instance, "hello")
+		got, err := wasmtime.CallFunc(t, store, instance, stringInOutFuncName, inPtr, inSize)
+		t.Log(got, err)
+		assert.NoError(t, err)
+
+		outPtr, outLen := int32(got.(int64)>>32), int32(got.(int64))
+		out := wasmtime.ReadOutStringReturn(store, instance, outPtr, outLen)
+		assert.Equal(t, "hello---", out)
 	})
 }
 
