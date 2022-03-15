@@ -81,12 +81,11 @@ func benchmark_fibonacci_paralle(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wazero - fb(%d)", fbIn), func(b *testing.B) {
+		mod, closer := wazero.NewWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+		defer closer()
 		b.RunParallel(func(pb *testing.PB) {
-			// 必须在线程里面加载, 不能在线程外加载，然后并发.
-			exports := wazero.NewWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
-
 			for pb.Next() {
-				wazero.CallWASMFuncWithWazero(b, exports, fibFuncName, uint64(fbIn))
+				wazero.CallWASMFuncWithWazero(b, mod, fibFuncName, uint64(fbIn))
 			}
 		})
 	})
@@ -151,11 +150,12 @@ func benchmark_fibonacci_single(b *testing.B, fbIn int32) {
 	})
 
 	b.Run(fmt.Sprintf("wasm-wazero - fb(%d)", fbIn), func(b *testing.B) {
-		exports := wazero.NewWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+		mod, closer := wazero.NewWASMStoreWithWazero(b, filepath.Join(selfDir(b), "..", wasmTinygo))
+		defer closer()
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			wazero.CallWASMFuncWithWazero(b, exports, fibFuncName, uint64(fbIn))
+			wazero.CallWASMFuncWithWazero(b, mod, fibFuncName, uint64(fbIn))
 		}
 	})
 

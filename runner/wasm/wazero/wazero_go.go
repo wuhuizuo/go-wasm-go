@@ -9,37 +9,46 @@ import (
 	"github.com/tetratelabs/wazero/wasm"
 )
 
-// NewGoWASMStoreWithWazero prepare for wazero wasm store.
-func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) wasm.ModuleExports {
+// NewGoWASMStoreWithWazero prepare for wazero wasm runtime.
+func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (wasm.Module, func() error) {
 	binary, err := os.ReadFile(wasmFile)
 	if err != nil {
 		b.Fatal(err)
 	}
 
-	store := wazero.NewStoreWithConfig(&wazero.StoreConfig{Engine: wazero.NewEngineJIT()})
+	runtime := wazero.NewRuntime()
 
-	if err := instantiateHostModuleForGo(store); err != nil {
-		b.Fatal(err)
-	}
-
-	exports, err := wazero.InstantiateModule(store, &wazero.ModuleConfig{
-		Name:   wazeroModName,
-		Source: binary,
-	})
+	host, err := instantiateHostModuleForGo(runtime)
 	if err != nil {
 		b.Fatal(err)
 	}
 
-	return exports
+	decoded, err := runtime.CompileModule(binary)
+	if err != nil {
+		host.Close()
+		b.Fatal(err)
+	}
+
+	module, err := runtime.InstantiateModule(decoded.WithName(wazeroModName))
+	if err != nil {
+		host.Close()
+		b.Fatal(err)
+	}
+
+	return module, func() (err error) {
+		module.Close()
+		host.Close()
+		return
+	}
 }
 
 // CallGoWASMFuncWithWazero call test func with wazero loader.
-func CallGoWASMFuncWithWazero(t testing.TB, exports wasm.ModuleExports, funcName string, args ...uint64) []uint64 {
-	f := exports.Function(funcName)
+func CallGoWASMFuncWithWazero(t testing.TB, module wasm.Module, funcName string, args ...uint64) []uint64 {
+	f := module.ExportedFunction(funcName)
 	if f == nil {
 		t.Fatalf("not found func %s", funcName)
 	}
-	ret, err := exports.Function(funcName).Call(nil, args...)
+	ret, err := module.ExportedFunction(funcName).Call(nil, args...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,11 +58,9 @@ func CallGoWASMFuncWithWazero(t testing.TB, exports wasm.ModuleExports, funcName
 	return ret
 }
 
-func instantiateHostModuleForGo(store wasm.Store) error {
-	wazero.WASISnapshotPreview1()
-	_, err := wazero.InstantiateHostModule(store, &wazero.HostModuleConfig{
-		Name: "go",
-		Functions: map[string]interface{}{
+func instantiateHostModuleForGo(runtime wazero.Runtime) (wasm.Module, error) {
+	return runtime.NewModuleBuilder("go").
+		ExportFunctions(map[string]interface{}{
 			"debug":                         func(sp int32) { fmt.Println(sp) },
 			"runtime.resetMemoryDataView":   func(int32) {},
 			"runtime.wasmExit":              func(code int32) { os.Exit(int(code)) },
@@ -78,8 +85,5 @@ func instantiateHostModuleForGo(store wasm.Store) error {
 			"syscall/js.valueInstanceOf":    func(int32) {},
 			"syscall/js.copyBytesToGo":      func(int32) {},
 			"syscall/js.copyBytesToJS":      func(int32) {},
-		},
-	})
-
-	return err
+		}).Instantiate()
 }
