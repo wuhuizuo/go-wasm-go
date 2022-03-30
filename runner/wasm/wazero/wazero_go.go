@@ -63,7 +63,9 @@ func instantiateHostModuleForGo(runtime wazero.Runtime) (wasm.Module, error) {
 		ExportFunctions(map[string]interface{}{
 			"debug":                         func(sp int32) { fmt.Println(sp) },
 			"runtime.resetMemoryDataView":   func(int32) {},
-			"runtime.wasmExit":              func(code int32) { os.Exit(int(code)) },
+			"runtime.wasmExit":              func(m wasm.Module, code uint32) {
+				_ = m.CloseWithExitCode(code)
+			},
 			"runtime.wasmWrite":             func(int32) {},
 			"runtime.nanotime1":             func(int32) {},
 			"runtime.walltime":              func(int32) {},
