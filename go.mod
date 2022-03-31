@@ -8,7 +8,7 @@ require (
 	github.com/second-state/WasmEdge-go v0.9.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
-	github.com/tetratelabs/wazero v0.0.0-20220315121216-f85857d081f7
+	github.com/tetratelabs/wazero v0.0.0-20220331063638-a351daa8586c
 	github.com/wasmerio/wasmer-go v1.0.4
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 )
