@@ -10,6 +10,14 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+var testGlobalVal int32
+
+func ModifyGlobalVal(delta int32) int32 {
+	testGlobalVal += delta
+
+	return testGlobalVal
+}
+
 func Fibonacci(in int32) int32 {
 	if in <= 1 {
 		return in
