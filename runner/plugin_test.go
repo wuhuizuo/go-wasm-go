@@ -17,6 +17,17 @@ const (
 	goPluginSo_1_17_7         = "provider/plugin/ok/plugin-1.17.7.so"
 )
 
+func TestPluginGobal(t *testing.T) {
+	f1 := plugin.NewGoPluginAlgFn(t, filepath.Join(selfDir(t), "..", goPluginSo), "ModifyGlobalVal")
+	assert.EqualValues(t, f1(123), 123)
+	assert.EqualValues(t, f1(100), 223)
+
+	// plugin so will be cached. multi time loading results are same namespace.
+	f2 := plugin.NewGoPluginAlgFn(t, filepath.Join(selfDir(t), "..", goPluginSo), "ModifyGlobalVal")
+	assert.EqualValues(t, f2(123), 346)
+	assert.EqualValues(t, f2(100), 446)
+}
+
 func TestPlugin(t *testing.T) {
 	t.Run("same go version same thirdparty versions", func(t *testing.T) {
 		testPlugin(t, filepath.Join(selfDir(t), "..", goPluginSo))
