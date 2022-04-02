@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "config:base",
+    "group:all",
+    "schedule:daily"
+  ],
+  "labels": ["dependencies"],
+  "assigneesFromCodeOwners": true,
+  "assigneesSampleSize": 1,
+  "separateMinorPatch": true,
+  "packageRules": [
+    {      
+      "updateTypes": ["digest"],
+      "enabled": false
+    }
+  ]
+}
