@@ -11,4 +11,4 @@ updates:
     schedule:
       interval: "daily"
       timezone: "Asia/Shanghai"
-      time: "15:53"
+      time: "16:07"
