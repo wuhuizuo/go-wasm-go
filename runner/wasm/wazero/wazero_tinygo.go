@@ -5,13 +5,14 @@ import (
 	"testing"
 
 	"github.com/tetratelabs/wazero"
-	"github.com/tetratelabs/wazero/wasm"
+	"github.com/tetratelabs/wazero/api"
+	"github.com/tetratelabs/wazero/wasi"
 )
 
 const wazeroModName = "wasmtest"
 
 // NewWASMStoreWithWazero prepare for wazero wasm runtime.
-func NewWASMStoreWithWazero(b testing.TB, wasmFile string) (wasm.Module, func() error) {
+func NewWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func() error) {
 	binary, err := os.ReadFile(wasmFile)
 	if err != nil {
 		b.Fatal(err)
@@ -19,33 +20,34 @@ func NewWASMStoreWithWazero(b testing.TB, wasmFile string) (wasm.Module, func() 
 
 	runtime := wazero.NewRuntime()
 
-	wasi, err := runtime.InstantiateModule(wazero.WASISnapshotPreview1())
+	wm, err := wasi.InstantiateSnapshotPreview1(runtime)
 	if err != nil {
-		wasi.Close()
+		wm.Close()
 		b.Fatal(err)
 	}
 
-	decoded, err := runtime.CompileModule(binary)
+	code, err := runtime.CompileModule(binary)
 	if err != nil {
-		wasi.Close()
+		wm.Close()
 		b.Fatal(err)
 	}
 
-	module, err := runtime.InstantiateModule(decoded.WithName(wazeroModName))
+	config := wazero.NewModuleConfig().WithName(wazeroModName)
+	module, err := runtime.InstantiateModuleWithConfig(code, config)
 	if err != nil {
-		wasi.Close()
+		wm.Close()
 		b.Fatal(err)
 	}
 
 	return module, func() (err error) {
 		module.Close()
-		wasi.Close()
+		wm.Close()
 		return
 	}
 }
 
 // CallWASMFuncWithWazero call test func with wazero loader.
-func CallWASMFuncWithWazero(t testing.TB, module wasm.Module, funcName string, args ...uint64) []uint64 {
+func CallWASMFuncWithWazero(t testing.TB, module api.Module, funcName string, args ...uint64) []uint64 {
 	ret, err := module.ExportedFunction(funcName).Call(nil, args...)
 	if err != nil {
 		t.Fatal(err)

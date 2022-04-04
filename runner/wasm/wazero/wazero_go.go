@@ -6,11 +6,11 @@ import (
 	"testing"
 
 	"github.com/tetratelabs/wazero"
-	"github.com/tetratelabs/wazero/wasm"
+	"github.com/tetratelabs/wazero/api"
 )
 
 // NewGoWASMStoreWithWazero prepare for wazero wasm runtime.
-func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (wasm.Module, func() error) {
+func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func() error) {
 	binary, err := os.ReadFile(wasmFile)
 	if err != nil {
 		b.Fatal(err)
@@ -23,13 +23,14 @@ func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (wasm.Module, func(
 		b.Fatal(err)
 	}
 
-	decoded, err := runtime.CompileModule(binary)
+	code, err := runtime.CompileModule(binary)
 	if err != nil {
 		host.Close()
 		b.Fatal(err)
 	}
 
-	module, err := runtime.InstantiateModule(decoded.WithName(wazeroModName))
+	config := wazero.NewModuleConfig().WithName(wazeroModName)
+	module, err := runtime.InstantiateModuleWithConfig(code, config)
 	if err != nil {
 		host.Close()
 		b.Fatal(err)
@@ -43,7 +44,7 @@ func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (wasm.Module, func(
 }
 
 // CallGoWASMFuncWithWazero call test func with wazero loader.
-func CallGoWASMFuncWithWazero(t testing.TB, module wasm.Module, funcName string, args ...uint64) []uint64 {
+func CallGoWASMFuncWithWazero(t testing.TB, module api.Module, funcName string, args ...uint64) []uint64 {
 	f := module.ExportedFunction(funcName)
 	if f == nil {
 		t.Fatalf("not found func %s", funcName)
@@ -58,12 +59,12 @@ func CallGoWASMFuncWithWazero(t testing.TB, module wasm.Module, funcName string,
 	return ret
 }
 
-func instantiateHostModuleForGo(runtime wazero.Runtime) (wasm.Module, error) {
+func instantiateHostModuleForGo(runtime wazero.Runtime) (api.Module, error) {
 	return runtime.NewModuleBuilder("go").
 		ExportFunctions(map[string]interface{}{
 			"debug":                         func(sp int32) { fmt.Println(sp) },
 			"runtime.resetMemoryDataView":   func(int32) {},
-			"runtime.wasmExit":              func(m wasm.Module, code uint32) {
+			"runtime.wasmExit":              func(m api.Module, code uint32) {
 				_ = m.CloseWithExitCode(code)
 			},
 			"runtime.wasmWrite":             func(int32) {},
