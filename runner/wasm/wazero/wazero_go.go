@@ -1,6 +1,7 @@
 package wazero
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -11,6 +12,8 @@ import (
 
 // NewGoWASMStoreWithWazero prepare for wazero wasm runtime.
 func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func() error) {
+	ctx := context.Background()
+
 	binary, err := os.ReadFile(wasmFile)
 	if err != nil {
 		b.Fatal(err)
@@ -18,19 +21,19 @@ func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func()
 
 	runtime := wazero.NewRuntime()
 
-	host, err := instantiateHostModuleForGo(runtime)
+	host, err := instantiateHostModuleForGo(ctx, runtime)
 	if err != nil {
 		b.Fatal(err)
 	}
 
-	code, err := runtime.CompileModule(binary)
+	code, err := runtime.CompileModule(ctx, binary)
 	if err != nil {
 		host.Close()
 		b.Fatal(err)
 	}
 
 	config := wazero.NewModuleConfig().WithName(wazeroModName)
-	module, err := runtime.InstantiateModuleWithConfig(code, config)
+	module, err := runtime.InstantiateModuleWithConfig(ctx, code, config)
 	if err != nil {
 		host.Close()
 		b.Fatal(err)
@@ -49,7 +52,7 @@ func CallGoWASMFuncWithWazero(t testing.TB, module api.Module, funcName string, 
 	if f == nil {
 		t.Fatalf("not found func %s", funcName)
 	}
-	ret, err := module.ExportedFunction(funcName).Call(nil, args...)
+	ret, err := module.ExportedFunction(funcName).Call(context.Background(), args...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +62,7 @@ func CallGoWASMFuncWithWazero(t testing.TB, module api.Module, funcName string, 
 	return ret
 }
 
-func instantiateHostModuleForGo(runtime wazero.Runtime) (api.Module, error) {
+func instantiateHostModuleForGo(ctx context.Context, runtime wazero.Runtime) (api.Module, error) {
 	return runtime.NewModuleBuilder("go").
 		ExportFunctions(map[string]interface{}{
 			"debug":                         func(sp int32) { fmt.Println(sp) },
@@ -88,5 +91,5 @@ func instantiateHostModuleForGo(runtime wazero.Runtime) (api.Module, error) {
 			"syscall/js.valueInstanceOf":    func(int32) {},
 			"syscall/js.copyBytesToGo":      func(int32) {},
 			"syscall/js.copyBytesToJS":      func(int32) {},
-		}).Instantiate()
+		}).Instantiate(ctx)
 }

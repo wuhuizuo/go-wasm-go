@@ -40,7 +40,7 @@ func Test_wazero_tinygo(t *testing.T) {
 }
 
 func Test_wazero_go(t *testing.T) {
-	t.Skip("not found func")
+	t.Skip("not found func") // See https://github.com/tetratelabs/wazero/issues/432
 	mod, closer := wazero.NewGoWASMStoreWithWazero(t, filepath.Join(selfDir(t), "..", wasmGo))
 	defer closer()
 
