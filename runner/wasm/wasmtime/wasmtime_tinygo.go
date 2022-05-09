@@ -36,7 +36,6 @@ func newWasiInstance(store *wasmtime.Store, file string) *wasmtime.Instance {
 
 func newWasiStore() *wasmtime.Store {
 	config := wasmtime.NewConfig()
-	config.SetInterruptable(true)
 	config.SetWasmReferenceTypes(true)
 	config.SetWasmThreads(true)
 	config.SetWasmBulkMemory(true)

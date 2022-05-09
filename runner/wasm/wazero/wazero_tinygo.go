@@ -16,7 +16,7 @@ const wazeroModName = "wasmtest"
 func NewWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func() error) {
 	ctx := context.Background()
 
-	binary, err := os.ReadFile(wasmFile)
+	source, err := os.ReadFile(wasmFile)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -25,26 +25,30 @@ func NewWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func() e
 
 	wm, err := wasi.InstantiateSnapshotPreview1(ctx, runtime)
 	if err != nil {
-		wm.Close()
+		_ = wm.Close(ctx)
 		b.Fatal(err)
 	}
 
-	code, err := runtime.CompileModule(ctx, binary)
+	compiled, err := runtime.CompileModule(ctx, source, wazero.NewCompileConfig())
 	if err != nil {
-		wm.Close()
+		_ = wm.Close(ctx)
 		b.Fatal(err)
 	}
 
 	config := wazero.NewModuleConfig().WithName(wazeroModName)
-	module, err := runtime.InstantiateModuleWithConfig(ctx, code, config)
+	module, err := runtime.InstantiateModule(ctx, compiled, config)
 	if err != nil {
-		wm.Close()
+		_ = wm.Close(ctx)
 		b.Fatal(err)
 	}
 
 	return module, func() (err error) {
-		module.Close()
-		wm.Close()
+		if e := module.Close(ctx); e != nil {
+			err = e
+		}
+		if e := wm.Close(ctx); e != nil && err != nil {
+			err = e
+		}
 		return
 	}
 }

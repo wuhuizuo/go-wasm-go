@@ -35,8 +35,7 @@ func newWasmInstance(store *wasmtime.Store, file string) *wasmtime.Instance {
 
 func newWasmStore() *wasmtime.Store {
 	config := wasmtime.NewConfig()
-	config.SetWasmModuleLinking(true)
-	// config.SetInterruptable(true)
+	// config.SetEpochInterruption(true)
 	// config.SetConsumeFuel(true)
 	// config.SetDebugInfo(true)
 
