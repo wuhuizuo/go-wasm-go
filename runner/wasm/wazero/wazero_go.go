@@ -14,35 +14,33 @@ import (
 func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func() error) {
 	ctx := context.Background()
 
-	binary, err := os.ReadFile(wasmFile)
+	source, err := os.ReadFile(wasmFile)
 	if err != nil {
 		b.Fatal(err)
 	}
 
 	runtime := wazero.NewRuntime()
 
-	host, err := instantiateHostModuleForGo(ctx, runtime)
-	if err != nil {
+	if _, err = instantiateHostModuleForGo(ctx, runtime); err != nil {
+		_ = runtime.Close(ctx)
 		b.Fatal(err)
 	}
 
-	code, err := runtime.CompileModule(ctx, binary)
+	compiled, err := runtime.CompileModule(ctx, source, wazero.NewCompileConfig())
 	if err != nil {
-		host.Close()
+		_ = runtime.Close(ctx)
 		b.Fatal(err)
 	}
 
 	config := wazero.NewModuleConfig().WithName(wazeroModName)
-	module, err := runtime.InstantiateModuleWithConfig(ctx, code, config)
+	module, err := runtime.InstantiateModule(ctx, compiled, config)
 	if err != nil {
-		host.Close()
+		_ = runtime.Close(ctx)
 		b.Fatal(err)
 	}
 
-	return module, func() (err error) {
-		module.Close()
-		host.Close()
-		return
+	return module, func() error {
+		return runtime.Close(ctx) // closes everything
 	}
 }
 
@@ -65,10 +63,10 @@ func CallGoWASMFuncWithWazero(t testing.TB, module api.Module, funcName string, 
 func instantiateHostModuleForGo(ctx context.Context, runtime wazero.Runtime) (api.Module, error) {
 	return runtime.NewModuleBuilder("go").
 		ExportFunctions(map[string]interface{}{
-			"debug":                         func(sp int32) { fmt.Println(sp) },
-			"runtime.resetMemoryDataView":   func(int32) {},
-			"runtime.wasmExit":              func(m api.Module, code uint32) {
-				_ = m.CloseWithExitCode(code)
+			"debug":                       func(sp int32) { fmt.Println(sp) },
+			"runtime.resetMemoryDataView": func(int32) {},
+			"runtime.wasmExit": func(ctx context.Context, m api.Module, code uint32) {
+				_ = m.CloseWithExitCode(ctx, code)
 			},
 			"runtime.wasmWrite":             func(int32) {},
 			"runtime.nanotime1":             func(int32) {},

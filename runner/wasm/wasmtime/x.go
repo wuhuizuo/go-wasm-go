@@ -27,16 +27,6 @@ func TransInBytesParam(store *wasmtime.Store, instance *wasmtime.Instance, in []
 	return aret, size, size
 }
 
-func TransOutBytesReturn(store *wasmtime.Store, instance *wasmtime.Instance, cap int32) (_, _, _ interface{}) {
-	// malloc memory space.
-	calloc := instance.GetFunc(store, "malloc")
-	aret, _ := calloc.Call(store, cap)
-
-	store.InterruptHandle()
-
-	return aret, int32(0), cap
-}
-
 func ReadOutBytesReturn(store *wasmtime.Store, instance *wasmtime.Instance, ptr, size int32) []byte {
 	return instance.GetExport(store, "memory").Memory().UnsafeData(store)[ptr : ptr+size]
 }
