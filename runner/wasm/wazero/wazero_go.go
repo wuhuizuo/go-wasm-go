@@ -21,32 +21,26 @@ func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func()
 
 	runtime := wazero.NewRuntime()
 
-	host, err := instantiateHostModuleForGo(ctx, runtime)
-	if err != nil {
+	if _, err = instantiateHostModuleForGo(ctx, runtime); err != nil {
+		_ = runtime.Close(ctx)
 		b.Fatal(err)
 	}
 
 	compiled, err := runtime.CompileModule(ctx, source, wazero.NewCompileConfig())
 	if err != nil {
-		_ = host.Close(ctx)
+		_ = runtime.Close(ctx)
 		b.Fatal(err)
 	}
 
 	config := wazero.NewModuleConfig().WithName(wazeroModName)
 	module, err := runtime.InstantiateModule(ctx, compiled, config)
 	if err != nil {
-		_ = host.Close(ctx)
+		_ = runtime.Close(ctx)
 		b.Fatal(err)
 	}
 
-	return module, func() (err error) {
-		if e := module.Close(ctx); e != nil {
-			err = e
-		}
-		if e := host.Close(ctx); e != nil && err != nil {
-			err = e
-		}
-		return
+	return module, func() error {
+		return runtime.Close(ctx) // closes everything
 	}
 }
 
