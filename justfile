@@ -1,7 +1,13 @@
-wasmedge_version := "0.9.1"
-tinygo_ver := "0.22.0"
+# renovate: datasource=github-releases depName=WasmEdge/WasmEdge
+wasmedge_version := "0.10.0" 
+
+# renovate: datasource=github-releases depName=tinygo-org/tinygo
+tinygo_ver := "0.24.0" 
 
 build: build_wasm_tinygo build_wasm_go build_plugin-all
+
+test:
+    go test -v ./runner/... ./provider/jsgoja ./provider/native
 
 build_wasm_tinygo:
     #!/usr/bin/env sh
