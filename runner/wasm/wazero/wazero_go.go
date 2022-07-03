@@ -89,5 +89,5 @@ func instantiateHostModuleForGo(ctx context.Context, runtime wazero.Runtime) (ap
 			"syscall/js.valueInstanceOf":    func(int32) {},
 			"syscall/js.copyBytesToGo":      func(int32) {},
 			"syscall/js.copyBytesToJS":      func(int32) {},
-		}).Instantiate(ctx)
+		}).Instantiate(ctx, runtime)
 }
