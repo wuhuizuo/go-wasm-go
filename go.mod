@@ -7,7 +7,7 @@ require (
 	github.com/dop251/goja v0.0.0-20220331101355-451b4e4cab3d
 	github.com/second-state/WasmEdge-go v0.9.2
 	github.com/sirupsen/logrus v1.8.1
-	github.com/stretchr/testify v1.7.2
+	github.com/stretchr/testify v1.8.0
 	github.com/tetratelabs/wazero v0.0.0-20220630052417-63f6b2231142
 	github.com/wasmerio/wasmer-go v1.0.4
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
