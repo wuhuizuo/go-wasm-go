@@ -1,4 +1,4 @@
-wasmedge_version := "0.9.1"
+wasmedge_version := "0.10.0"
 tinygo_ver := "0.22.0"
 
 build: build_wasm_tinygo build_wasm_go build_plugin-all
