@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/bytecodealliance/wasmtime-go v0.38.1
 	github.com/dop251/goja v0.0.0-20220331101355-451b4e4cab3d
-	github.com/second-state/WasmEdge-go v0.9.2
+	github.com/second-state/WasmEdge-go v0.10.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.8.0
 	github.com/tetratelabs/wazero v0.0.0-20220630052417-63f6b2231142
