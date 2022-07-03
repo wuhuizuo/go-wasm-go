@@ -11,7 +11,7 @@ import (
 func GetWasmedgeInstance(t testing.TB, wasmFile string) (*wasmedge.VM, *wasmedge.Configure) {
 	conf := wasmedge.NewConfigure(wasmedge.WASI)
 	vm := wasmedge.NewVMWithConfig(conf)
-	wasi := vm.GetImportObject(wasmedge.HostRegistration(wasmedge.WASI))
+	wasi := vm.GetImportModule(wasmedge.HostRegistration(wasmedge.WASI))
 	wasi.InitWasi(
 		[]string{wasmFile}, /// The args
 		os.Environ(),       /// The envs

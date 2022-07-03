@@ -6,6 +6,9 @@ tinygo_ver := "0.24.0"
 
 build: build_wasm_tinygo build_wasm_go build_plugin-all
 
+test:
+    go test -v ./runner/... ./provider/jsgoja ./provider/native
+
 build_wasm_tinygo:
     #!/usr/bin/env sh
     cd provider/wasm-tinygo &&
