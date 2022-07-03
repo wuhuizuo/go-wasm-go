@@ -27,11 +27,11 @@ func Wrap(f interface{}) func(js.Value, []js.Value) interface{} {
 			case js.TypeSymbol:
 				arg = reflect.ValueOf(args[i].String()).Convert(rt.In(i))
 			case js.TypeObject:
-				arg = reflect.ValueOf(args[i].JSValue()).Convert(rt.In(i))
+				arg = reflect.ValueOf(args[i]).Convert(rt.In(i))
 			case js.TypeFunction:
-				arg = reflect.ValueOf(args[i].JSValue()).Convert(rt.In(i))
+				arg = reflect.ValueOf(args[i]).Convert(rt.In(i))
 			default:
-				arg = reflect.ValueOf(args[i].JSValue()).Convert(rt.In(i))
+				arg = reflect.ValueOf(args[i]).Convert(rt.In(i))
 			}
 			rargs = append(rargs, arg)
 		}

@@ -1,6 +1,6 @@
 module github.com/wuhuizuo/go-wasm-go
 
-go 1.17
+go 1.18
 
 require (
 	github.com/bytecodealliance/wasmtime-go v0.38.1
