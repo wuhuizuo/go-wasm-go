@@ -1,8 +1,8 @@
 # renovate: datasource=github-releases depName=WasmEdge/WasmEdge
-wasmedge_version := "0.10.0" 
+wasmedge_version := "0.10.1"
 
 # renovate: datasource=github-releases depName=tinygo-org/tinygo
-tinygo_ver := "0.24.0" 
+tinygo_ver := "0.25.0"
 
 build: build_wasm_tinygo build_wasm_go build_plugin-all
 
@@ -23,8 +23,7 @@ build_plugin-all:
     just build_plugin plugin/ok
     just build_plugin plugin/third
     just build_plugin plugin/third_diff_mod_ver
-    just build_plugin_ver 1.16.15
-    just build_plugin_ver 1.17.8
+    just build_plugin_ver 1.18.5
 
 build_plugin TARGET:
     #!/usr/bin/env sh

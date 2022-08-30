@@ -19,7 +19,7 @@ func NewGoWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func()
 		b.Fatal(err)
 	}
 
-	runtime := wazero.NewRuntime()
+	runtime := wazero.NewRuntime(ctx)
 
 	if _, err = instantiateHostModuleForGo(ctx, runtime); err != nil {
 		_ = runtime.Close(ctx)
