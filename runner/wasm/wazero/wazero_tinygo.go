@@ -7,7 +7,7 @@ import (
 
 	"github.com/tetratelabs/wazero"
 	"github.com/tetratelabs/wazero/api"
-	"github.com/tetratelabs/wazero/wasi_snapshot_preview1"
+	"github.com/tetratelabs/wazero/imports/wasi_snapshot_preview1"
 )
 
 const wazeroModName = "wasmtest"
@@ -21,7 +21,7 @@ func NewWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func() e
 		b.Fatal(err)
 	}
 
-	runtime := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig().WithWasmCore2())
+	runtime := wazero.NewRuntimeWithConfig(ctx, wazero.NewRuntimeConfig().WithWasmCore2())
 	if _, err = wasi_snapshot_preview1.Instantiate(ctx, runtime); err != nil {
 		_ = runtime.Close(ctx)
 		b.Fatal(err)
