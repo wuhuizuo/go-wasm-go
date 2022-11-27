@@ -21,13 +21,13 @@ func NewWASMStoreWithWazero(b testing.TB, wasmFile string) (api.Module, func() e
 		b.Fatal(err)
 	}
 
-	runtime := wazero.NewRuntimeWithConfig(ctx, wazero.NewRuntimeConfig().WithWasmCore2())
+	runtime := wazero.NewRuntime(ctx)
 	if _, err = wasi_snapshot_preview1.Instantiate(ctx, runtime); err != nil {
 		_ = runtime.Close(ctx)
 		b.Fatal(err)
 	}
 
-	compiled, err := runtime.CompileModule(ctx, source, wazero.NewCompileConfig())
+	compiled, err := runtime.CompileModule(ctx, source)
 	if err != nil {
 		_ = runtime.Close(ctx)
 		b.Fatal(err)
