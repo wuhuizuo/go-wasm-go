@@ -3,7 +3,7 @@ module github.com/wuhuizuo/go-wasm-go
 go 1.19
 
 require (
-	github.com/bytecodealliance/wasmtime-go v0.39.0
+	github.com/bytecodealliance/wasmtime-go v1.0.0
 	github.com/dop251/goja v0.0.0-20220331101355-451b4e4cab3d
 	github.com/second-state/WasmEdge-go v0.10.1
 	github.com/sirupsen/logrus v1.9.0
