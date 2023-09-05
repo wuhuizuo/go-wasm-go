@@ -3,7 +3,7 @@ module github.com/wuhuizuo/go-wasm-go/provider/plugin/third
 go 1.19
 
 require (
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 )
 
