@@ -1,8 +1,8 @@
 # renovate: datasource=github-releases depName=WasmEdge/WasmEdge
-wasmedge_version := "0.10.1"
+wasmedge_version := "0.13.4"
 
 # renovate: datasource=github-releases depName=tinygo-org/tinygo
-tinygo_ver := "0.25.0"
+tinygo_ver := "0.31.2"
 
 build: build_wasm_tinygo build_wasm_go build_plugin-all
 
@@ -12,18 +12,18 @@ test:
 build_wasm_tinygo:
     #!/usr/bin/env sh
     cd provider/wasm-tinygo &&
-    tinygo build -target=wasi -wasm-abi=generic -o wasm.wasm
+    tinygo build -target=wasi -o wasm.wasm
 
 build_wasm_go:
     #!/usr/bin/env sh
     cd provider/wasm-go
-    GOOS=js GOARCH=wasm go build -o wasm.wasm
+    GOOS=wasip1 GOARCH=wasm go build -o wasm.wasm
 
 build_plugin-all: 
     just build_plugin plugin/ok
     just build_plugin plugin/third
     just build_plugin plugin/third_diff_mod_ver
-    just build_plugin_ver 1.18.5
+    just build_plugin_ver 1.22.2
 
 build_plugin TARGET:
     #!/usr/bin/env sh
@@ -32,7 +32,7 @@ build_plugin TARGET:
 
 build_plugin_ver VER:
     docker run --rm -v $(pwd):/ws -w /ws/provider/plugin/ok golang:{{VER}} \
-       go build -buildmode=plugin -o plugin-{{VER}}.so
+       go build -buildmode=plugin -buildvcs=false -o plugin-{{VER}}.so
 
 install_tools: install_wasmedge install_tinygo
 
