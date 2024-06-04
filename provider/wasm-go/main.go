@@ -1,19 +1,54 @@
 package main
 
 import (
-	"syscall/js"
+	"unsafe"
 
 	"github.com/wuhuizuo/go-wasm-go/provider/native"
 )
 
-func main() {
-	js.Global().Set("Fibonacci", js.FuncOf(Wrap(native.Fibonacci)))
-	js.Global().Set("RequestHTTP", js.FuncOf(Wrap(native.RequestHTTP)))
-	js.Global().Set("FileIO", js.FuncOf(Wrap(native.FileIO)))
-	js.Global().Set("MultiThreads", js.FuncOf(Wrap(native.MultiThreads)))
-	js.Global().Set("BytesTest", js.FuncOf(Wrap(native.BytesTest)))
-	js.Global().Set("InterfaceTest", js.FuncOf(Wrap(native.InterfaceTest)))
-	js.Global().Set("ErrTest", js.FuncOf(Wrap(native.ErrTest)))
+var buffer []byte
 
-	select {}
+func main() {
+	// nothing.
+}
+
+//go:wasmexport
+func Fibonacci(in int32) int32 {
+	return native.Fibonacci(in)
+}
+
+//go:wasmexport
+func RequestHTTP() int32 {
+	return native.RequestHTTP()
+}
+
+//go:wasmexport
+func FileIO() int32 {
+	return native.FileIO()
+}
+
+//go:wasmexport
+func MultiThreads(num int32) int32 {
+	return native.MultiThreads(num)
+}
+
+//go:wasmexport
+func BytesTest(in []byte) int32 {
+	buffer = native.BytesTest(in)
+	return *(*int32)(unsafe.Pointer(&buffer))
+}
+
+//go:wasmexport
+func BytesTestLen() int32 {
+	return int32(len(buffer))
+}
+
+//go:wasmexport
+func InterfaceTest(in interface{}) interface{} {
+	return native.InterfaceTest(in)
+}
+
+//go:wasmexport
+func ErrTest(in error) error {
+	return native.ErrTest(in)
 }

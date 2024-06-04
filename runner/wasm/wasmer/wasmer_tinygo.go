@@ -23,10 +23,10 @@ func GetWasmFuncWithWasmer(t testing.TB, wasmFile, funcName string) wasmer.Nativ
 	}
 
 	// wasi dealing.
-	builder := wasmer.NewWasiStateBuilder("wasm-tinygo").
+	wasiEnv, err := wasmer.NewWasiStateBuilder("wasm-tinygo").
 		Environment("KEY", "VALUE").
-		CaptureStdout()
-	wasiEnv, err := builder.Finalize()
+		CaptureStdout().
+		Finalize()
 	if err != nil {
 		t.Fatal(err)
 	}
